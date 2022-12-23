@@ -77,9 +77,9 @@ void AARManager::InputTouch(ETouchIndex::Type fingerIndex, FVector location)
 			child->SetActorHiddenInGame(false);
 		}
 		ARLevelObj.Get()->SetActorLocation(planeTr.GetLocation());
-		
-
-		GetWorld()->SpawnActor(ARHero, &ARLevelObj.Get()->GetActorTransform());
+		ARLevelObj.Get()->SetActorRotation(planeTr.GetRotation());
+		const FVector SpawnLocation = ARLevelObj.Get()->GetActorLocation();
+		GetWorld()->SpawnActor(ARHero, &SpawnLocation);
 		ARHeroObj = static_cast<AARHero*>(UGameplayStatics::GetActorOfClass(this, ARHero));
 
 		bIsSpawned = true;
@@ -92,17 +92,18 @@ void AARManager::InputTouch(ETouchIndex::Type fingerIndex, FVector location)
 void AARManager::ForwardMovement(float inputValue)
 {
 	if (ARHeroObj != nullptr)
-	{
-		ARHeroObj->ForwardMovement(inputValue, GetTransform().GetUnitAxis(EAxis::Type::X));
+		ARHeroObj->ForwardMovement(inputValue, 
+			GetTransform().GetUnitAxis(EAxis::Type::X));
 
-	}
+	
 
 }
 
 void AARManager::RightMovement(float inputValue)
 {
 	if (ARHeroObj != nullptr)
-		ARHeroObj->RightMovement(inputValue, GetTransform().GetUnitAxis(EAxis::Type::Y));
+		ARHeroObj->RightMovement(inputValue, 
+			GetTransform().GetUnitAxis(EAxis::Type::Y));
 }
 
 void AARManager::JumpAction()

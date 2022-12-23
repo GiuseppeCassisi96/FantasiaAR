@@ -3,6 +3,8 @@
 
 #include "ARHero.h"
 
+#include "Components/ArrowComponent.h"
+
 // Sets default values
 AARHero::AARHero()
 {
@@ -16,6 +18,9 @@ void AARHero::BeginPlay()
 {
 	Super::BeginPlay();
 	rotation = FRotator::ZeroRotator;
+	oldPos = FVector::Zero();
+	newPos = FVector::Zero();
+	direction = FVector::Zero();
 }
 
 // Called every frame
@@ -33,24 +38,24 @@ void AARHero::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 }
 void AARHero::ForwardMovement(float inputValue, FVector ARCameraFowardAxe)
 {
-	GetMovementComponent()->AddInputVector(ARCameraFowardAxe * inputValue
+	AddMovementInput(ARCameraFowardAxe, inputValue
 		* Speed * GetWorld()->GetDeltaSeconds());
 	if (GetMovementComponent()->Velocity != FVector::Zero())
 	{
-		rotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(),
-			GetMovementComponent()->Velocity + GetActorLocation());
+		rotation = UKismetMathLibrary::FindLookAtRotation(FVector::ForwardVector, 
+			GetMovementComponent()->Velocity);
 	}
 }
 
 void AARHero::RightMovement(float inputValue, FVector ARCameraRightAxe)
 {
-	GetMovementComponent()->AddInputVector(ARCameraRightAxe * inputValue
+	AddMovementInput(ARCameraRightAxe, inputValue
 		* Speed * GetWorld()->GetDeltaSeconds());
-
 	if (GetMovementComponent()->Velocity != FVector::Zero())
 	{
-		rotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(),
-			GetMovementComponent()->Velocity + GetActorLocation());
+		rotation = UKismetMathLibrary::FindLookAtRotation(FVector::ForwardVector, 
+			GetMovementComponent()->Velocity);
+		
 	}
 
 }
