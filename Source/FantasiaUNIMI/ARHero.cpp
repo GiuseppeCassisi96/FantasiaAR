@@ -15,14 +15,14 @@ AARHero::AARHero()
 void AARHero::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	rotation = FRotator::ZeroRotator;
 }
 
 // Called every frame
 void AARHero::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	SetActorRotation(FRotator(0.0f, rotation.Yaw, 0.0f));
 }
 
 // Called to bind functionality to input
@@ -30,5 +30,40 @@ void AARHero::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+}
+void AARHero::ForwardMovement(float inputValue, FVector ARCameraFowardAxe)
+{
+	GetMovementComponent()->AddInputVector(ARCameraFowardAxe * inputValue
+		* Speed * GetWorld()->GetDeltaSeconds());
+	if (GetMovementComponent()->Velocity != FVector::Zero())
+	{
+		rotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(),
+			GetMovementComponent()->Velocity + GetActorLocation());
+	}
+}
+
+void AARHero::RightMovement(float inputValue, FVector ARCameraRightAxe)
+{
+	GetMovementComponent()->AddInputVector(ARCameraRightAxe * inputValue
+		* Speed * GetWorld()->GetDeltaSeconds());
+
+	if (GetMovementComponent()->Velocity != FVector::Zero())
+	{
+		rotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(),
+			GetMovementComponent()->Velocity + GetActorLocation());
+	}
+
+}
+
+void AARHero::JumpAction()
+{
+	Jump();
+}
+
+void AARHero::StopJumpAction()
+{
+	StopJumping();
+	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Cyan,
+		TEXT("STOP"));
 }
 
