@@ -7,7 +7,11 @@
 		{
 			"Name": "FantasiaUNIMI",
 			"Type": "Runtime",
-			"LoadingPhase": "Default"
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [
+				"Engine",
+				"UMG"
+			]
 		}
 	],
 	"Plugins": [
@@ -16,6 +20,13 @@
 			"Enabled": true,
 			"TargetAllowList": [
 				"Editor"
+			]
+		},
+		{
+			"Name": "GoogleARCore",
+			"Enabled": true,
+			"SupportedTargetPlatforms": [
+				"Android"
 			]
 		}
 	]
