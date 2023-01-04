@@ -5,14 +5,9 @@
 #include "CoreMinimal.h"
 #include "AugmentedReality/Public/ARBlueprintLibrary.h"
 #include "Kismet/GameplayStatics.h"
-#include "ARLevel.h"
 #include "ARHero.h"
+#include "ARWaypoint.h"
 #include "Camera/CameraComponent.h"
-#include "Components/InputComponent.h"
-#include "GameFramework/CharacterMovementComponent.h"
-#include "GameFramework/PawnMovementComponent.h"
-#include "EngineUtils.h"
-#include "GameFramework/Character.h"
 #include "GameFramework/Pawn.h"
 #include "ARManager.generated.h"
 
@@ -36,6 +31,8 @@ public:
 	AARHero* ARHeroObj;
 	UPROPERTY(EditAnywhere, Category= "RootLevel")
 	TSoftObjectPtr<APawn> ARLevelObj;
+	UPROPERTY(EditAnywhere, Category= "Waypoints")
+	TArray<TSoftObjectPtr<AActor>> wayPoints;
 
 protected:
 	// Called when the game starts or when spawned
@@ -51,6 +48,7 @@ protected:
 	FTransform planeTr;
 	FVector2D ScreenSize;
 	TArray<UARTrackedGeometry*> Results;
+	FTimerHandle attackTimerHandle;
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -61,6 +59,5 @@ public:
 	void ForwardMovement(float inputValue);
 	void RightMovement(float inputValue);
 	void JumpAction();
-	void StopJumpAction();
-
+	void AttackAction();
 };

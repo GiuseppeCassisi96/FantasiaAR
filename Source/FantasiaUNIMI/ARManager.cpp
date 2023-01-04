@@ -59,8 +59,8 @@ void AARManager::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 	PlayerInputComponent->BindAxis("Vertical", this, &AARManager::ForwardMovement);
 	PlayerInputComponent->BindAction("Jump", EInputEvent::IE_Pressed,
 		this, &AARManager::JumpAction);
-	PlayerInputComponent->BindAction("Jump", EInputEvent::IE_Released,
-		this, &AARManager::StopJumpAction);
+	PlayerInputComponent->BindAction("Attack", EInputEvent::IE_Pressed,
+		this, &AARManager::AttackAction);
 }
 
 
@@ -76,6 +76,8 @@ void AARManager::InputTouch(ETouchIndex::Type fingerIndex, FVector location)
 		{
 			child->SetActorHiddenInGame(false);
 		}
+
+		
 		ARLevelObj.Get()->SetActorLocation(planeTr.GetLocation());
 		ARLevelObj.Get()->SetActorRotation(planeTr.GetRotation());
 		const FVector SpawnLocation = ARLevelObj.Get()->GetActorLocation();
@@ -83,6 +85,10 @@ void AARManager::InputTouch(ETouchIndex::Type fingerIndex, FVector location)
 		ARHeroObj = static_cast<AARHero*>(UGameplayStatics::GetActorOfClass(this, ARHero));
 
 		bIsSpawned = true;
+		for (auto waypoint : wayPoints)
+		{
+			static_cast<AARWaypoint*>(waypoint.Get())->SpawCharacter();
+		}
 	}
 
 }
@@ -112,8 +118,9 @@ void AARManager::JumpAction()
 		ARHeroObj->JumpAction();
 }
 
-void AARManager::StopJumpAction()
+void AARManager::AttackAction()
 {
 	if (ARHeroObj != nullptr)
-		ARHeroObj->StopJumpAction();
+		ARHeroObj->Attack();
 }
+

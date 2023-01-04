@@ -3,24 +3,28 @@
 
 #include "ARHero.h"
 
+#include "TimerManager.h"
 #include "Components/ArrowComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AARHero::AARHero()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
 }
 
 // Called when the game starts or when spawned
 void AARHero::BeginPlay()
 {
+	
 	Super::BeginPlay();
 	rotation = FRotator::ZeroRotator;
 	oldPos = FVector::Zero();
 	newPos = FVector::Zero();
 	direction = FVector::Zero();
+	OnTakeAnyDamage.AddUniqueDynamic(this, &AARHero::TakeDamageHero);
+	TimerFunctionDelegate.BindUFunction(this, "SetbCanAttack");
 }
 
 // Called every frame
@@ -55,7 +59,6 @@ void AARHero::RightMovement(float inputValue, FVector ARCameraRightAxe)
 	{
 		rotation = UKismetMathLibrary::FindLookAtRotation(FVector::ForwardVector, 
 			GetMovementComponent()->Velocity);
-		
 	}
 
 }
@@ -65,10 +68,26 @@ void AARHero::JumpAction()
 	Jump();
 }
 
-void AARHero::StopJumpAction()
+void AARHero::Attack()
 {
-	StopJumping();
-	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Cyan,
-		TEXT("STOP"));
+	if(bCanAttack)
+	{
+		bCanAttack = false;
+		GetWorldTimerManager().SetTimer(attackTimerHandle, TimerFunctionDelegate, attackTime, false);
+		UGameplayStatics::ApplyRadialDamage(this, 10.0f, GetActorLocation(),
+			attackRadius, damageType, Actors);
+		
+	}
 }
+
+void AARHero::TakeDamageHero(AActor* Actor, float damage, const UDamageType* type, AController* Contr, AActor* a)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Red, TEXT("Hero che male"));
+}
+
+void AARHero::SetbCanAttack()
+{
+	bCanAttack = true;
+}
+
 
