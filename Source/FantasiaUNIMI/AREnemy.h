@@ -5,9 +5,21 @@
 #include "CoreMinimal.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
-#include "GameFramework/PawnMovementComponent.h"
+#include "TimerManager.h"
+#include "Animation/AnimNode_StateMachine.h"
+#include "MainAnimInstance.h"
+#include "Components/SkeletalMeshComponent.h"
+#include "Components/SphereComponent.h"
 #include "GameFramework/Character.h"
 #include "AREnemy.generated.h"
+
+
+enum class EFSMState
+{
+	EFSM_Follow,
+	EFSM_Attack,
+	EFSM_Idle
+};
 
 UCLASS()
 class FANTASIAUNIMI_API AAREnemy : public ACharacter
@@ -15,12 +27,7 @@ class FANTASIAUNIMI_API AAREnemy : public ACharacter
 	GENERATED_BODY()
 
 public:
-	enum State
-	{
-		Follow,
-		Attack,
-		Patrol
-	};
+	
 	// Sets default values for this character's properties
 	AAREnemy();
 	UPROPERTY(EditAnywhere, Category = "Distances")
@@ -33,20 +40,33 @@ public:
 	float speed = 1.0f;
 	UPROPERTY(EditAnywhere, Category = "Damage")
 	TSubclassOf<UDamageType> damageType;
-
+	UPROPERTY(EditDefaultsOnly, Category = "Attack")
+	float minAttackTime;
+	UPROPERTY(EditDefaultsOnly, Category = "Attack")
+	float maxAttackTime;
+	UPROPERTY(EditAnywhere, Category = "Attack")
+	float attackDamage = 10.0f;
+	UPROPERTY(EditDefaultsOnly, Category = "Attack")
+	UAnimMontage* AttackMontage;
+	UPROPERTY(EditDefaultsOnly,Category="IA")
+	USphereComponent* followSphere;
+	UPROPERTY(EditDefaultsOnly, Category = "IA")
+	USphereComponent* combatSphere;
+	
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-	State currentState;
+	EFSMState enemyState;
 	UPROPERTY()
 	APawn* ARHeroObj;
 	FVector DistanceVector;
 	FRotator rotation;
-	UPROPERTY(EditAnywhere, Category= "Attack")
-	float attackTime = 3.0f;
-	UPROPERTY(EditAnywhere, Category = "Attack")
-	float attackDamage = 10.0f;
-	FTimerHandle attackTimerHandle;
+	
+	UPROPERTY()
+	UMainAnimInstance* EnemyAnimInstance;
+	FTimerHandle attackTimer;
+	bool bIsAttacking;
+	
 
 
 public:	
@@ -57,10 +77,24 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	void ExecuteFSM();
 	void CheckDistance(APawn* targetPawn);
-	void SetState(State newState);
+	FORCEINLINE void SetState(EFSMState newState) { enemyState = newState; }
+	UFUNCTION(BlueprintCallable)
 	void ApplyDamageHero();
 	UFUNCTION()
 	void TakeDamageEnemy(AActor* Actor, float damage, const UDamageType* type, AController* Contr, AActor* a);
+	void Attack();
+	UFUNCTION()
+	void FollowBegin(UPrimitiveComponent* OverlappedComponent, AActor* otherActor, UPrimitiveComponent* otherComponent,
+		int otherBodyIndex, bool fromSweep, const FHitResult& sweepResults);
+	UFUNCTION()
+		void FollowEnd(UPrimitiveComponent* OverlappedComponent, AActor* otherActor, UPrimitiveComponent* otherComponent,
+			int otherBodyIndex);
+	UFUNCTION()
+	void CombatBegin(UPrimitiveComponent* OverlappedComponent, AActor* otherActor, UPrimitiveComponent* otherComponent,
+		int otherBodyIndex, bool fromSweep, const FHitResult& sweepResults);
+	UFUNCTION()
+		void CombatEnd(UPrimitiveComponent* OverlappedComponent, AActor* otherActor, UPrimitiveComponent* otherComponent,
+			int otherBodyIndex);
 	
 	
 };
