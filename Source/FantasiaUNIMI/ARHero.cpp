@@ -3,9 +3,7 @@
 
 #include "ARHero.h"
 
-#include "TimerManager.h"
-#include "Components/ArrowComponent.h"
-#include "Kismet/GameplayStatics.h"
+
 
 // Sets default values
 AARHero::AARHero()
@@ -25,6 +23,7 @@ void AARHero::BeginPlay()
 	direction = FVector::Zero();
 	OnTakeAnyDamage.AddUniqueDynamic(this, &AARHero::TakeDamageHero);
 	TimerFunctionDelegate.BindUFunction(this, "SetbCanAttack");
+	Actors.Add(this);
 }
 
 // Called every frame
@@ -82,7 +81,7 @@ void AARHero::Attack()
 
 void AARHero::TakeDamageHero(AActor* Actor, float damage, const UDamageType* type, AController* Contr, AActor* a)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Red, TEXT("Hero che male"));
+	heroLife -= damage;
 }
 
 void AARHero::SetbCanAttack()

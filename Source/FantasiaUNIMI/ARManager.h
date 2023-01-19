@@ -25,7 +25,8 @@ public:
 	UCameraComponent* CameraComponent;
 	UPROPERTY(EditAnywhere, Category = "Hero")
 	TSubclassOf<AARHero> ARHero;
-
+	UPROPERTY(EditDefaultsOnly, Category = "Touch interface")
+	UTouchInterface* TouchInterface;
 	
 	UPROPERTY()
 	AARHero* ARHeroObj;
@@ -33,22 +34,27 @@ public:
 	TSoftObjectPtr<APawn> ARLevelObj;
 	UPROPERTY(EditAnywhere, Category= "Waypoints")
 	TArray<TSoftObjectPtr<AActor>> wayPoints;
+	UPROPERTY(BlueprintReadWrite)
+	bool bScanIsComplete;
+	UPROPERTY(BlueprintReadWrite)
+	bool bIsSpawned;
+	
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	UPROPERTY()
 	UARTrackedGeometry* ARCorePlane;
-	UPROPERTY(BlueprintReadWrite)
-	bool bScanIsComplete;
+	
 	UPROPERTY(BlueprintReadWrite)
 	bool bIsTracked;
-	UPROPERTY(BlueprintReadWrite)
-	bool bIsSpawned;
 	FTransform planeTr;
 	FVector2D ScreenSize;
+	UPROPERTY()
 	TArray<UARTrackedGeometry*> Results;
 	FTimerHandle attackTimerHandle;
+	UPROPERTY()
+	APlayerController* PlayerController;
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

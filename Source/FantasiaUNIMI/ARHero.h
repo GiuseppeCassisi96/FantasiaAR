@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "TimerManager.h"
 #include "Components/BoxComponent.h"
-#include "Components/CapsuleComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "GameFramework/Character.h"
@@ -31,6 +31,10 @@ public:
 	float attackRadius = 14.0f;
 	FTimerHandle attackTimerHandle;
 	bool bCanAttack = true;
+	UPROPERTY(EditDefaultsOnly, Category= "Life")
+	int heroLife;
+	int numberOfCoin;
+	TSoftObjectPtr<UUserWidget> LevelMenu;
 
 protected:
 	// Called when the game starts or when spawned

@@ -16,9 +16,12 @@ AARManager::AARManager()
 void AARManager::BeginPlay()
 {
 	Super::BeginPlay();
-	APlayerController* controller = UGameplayStatics::GetPlayerController(this, 0);
+
+	PlayerController = UGameplayStatics::GetPlayerController(this, 0);
+	PlayerController->Possess(this);
+	PlayerController->ActivateTouchInterface(nullptr);
 	int xSize, ySize;
-	controller->GetViewportSize(xSize, ySize);
+	PlayerController->GetViewportSize(xSize, ySize);
 	ScreenSize.X = static_cast<float>(xSize);
 	ScreenSize.Y = static_cast<float>(ySize);
 	ScreenSize *= 0.5f;
@@ -34,7 +37,6 @@ void AARManager::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	if (!bScanIsComplete)
 	{
-
 		Results = UARBlueprintLibrary::GetAllGeometries();
 		if (Results.Num() > 0)
 		{
@@ -68,8 +70,6 @@ void AARManager::InputTouch(ETouchIndex::Type fingerIndex, FVector location)
 {
 	if (ARCorePlane != nullptr && !bIsSpawned)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, TEXT("ENTRY"));
-
 		TArray<AActor*> Actors;
 		ARLevelObj.Get()->GetAttachedActors(Actors, true, true);
 		for (auto const child : Actors)
@@ -89,6 +89,7 @@ void AARManager::InputTouch(ETouchIndex::Type fingerIndex, FVector location)
 		{
 			static_cast<AARWaypoint*>(waypoint.Get())->SpawCharacter();
 		}
+		PlayerController->ActivateTouchInterface(TouchInterface);
 	}
 
 }
@@ -123,4 +124,5 @@ void AARManager::AttackAction()
 	if (ARHeroObj != nullptr)
 		ARHeroObj->Attack();
 }
+
 
