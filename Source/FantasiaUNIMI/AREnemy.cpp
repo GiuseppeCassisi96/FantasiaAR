@@ -30,8 +30,9 @@ void AAREnemy::BeginPlay()
 	combatSphere->OnComponentEndOverlap.AddDynamic(this, &AAREnemy::CombatEnd);
 	ARHeroObj =  static_cast<APawn*>(UGameplayStatics::GetActorOfClass(this,
 		ARHeroClass));
-	OnTakeAnyDamage.AddUniqueDynamic(this, &AAREnemy::TakeDamageEnemy);
+	OnTakeAnyDamage.AddDynamic(this, &AAREnemy::TakeDamageFromHero);
 	EnemyAnimInstance = static_cast<UMainAnimInstance*>(GetMesh()->GetAnimInstance());
+	TimerFunctionDelegate.BindUFunction(this, "Attack");
 }
 
 // Called every frame
@@ -50,8 +51,6 @@ void AAREnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 void AAREnemy::CheckDistance(APawn* targetPawn)
 {
-	const double distance = UKismetMathLibrary::Vector_Distance
-	(GetActorLocation(), targetPawn->GetActorLocation());
 	DistanceVector = UKismetMathLibrary::Vector_NormalUnsafe( targetPawn->GetActorLocation() - GetActorLocation());
 }
 
@@ -60,10 +59,6 @@ void AAREnemy::ExecuteFSM()
 	CheckDistance(ARHeroObj);
 	if(enemyState == EFSMState::EFSM_Follow)
 	{
-		AddMovementInput(DistanceVector, 1.0f * speed *
-			GetWorld()->GetDeltaSeconds());
-		rotation = UKismetMathLibrary::FindLookAtRotation(FVector::ForwardVector,
-			GetMovementComponent()->Velocity);
 		if(!bIsAttacking)
 		{
 			AddMovementInput(DistanceVector, 1.0f * speed *
@@ -75,20 +70,19 @@ void AAREnemy::ExecuteFSM()
 	}
 }
 
-void AAREnemy::ApplyDamageHero()
+void AAREnemy::ApplyDamageToHero()
 {
 	if(enemyState == EFSMState::EFSM_Attack)
 	{
 		UGameplayStatics::ApplyDamage(ARHeroObj, attackDamage,
 			GetController(), this, damageType);
 		float attackTime = FMath::RandRange(minAttackTime, maxAttackTime);
-		GetWorldTimerManager().SetTimer(attackTimer, this,
-			&AAREnemy::Attack, attackTime);
+		GetWorldTimerManager().SetTimer(attackTimer, TimerFunctionDelegate,attackTime,false);
 	}
 		
 }
 
-void AAREnemy::TakeDamageEnemy(AActor* Actor, float damage, const UDamageType* type, AController* Contr, AActor* a)
+void AAREnemy::TakeDamageFromHero(AActor* Actor, float damage, const UDamageType* type, AController* Contr, AActor* a)
 {
 	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Red, TEXT("Goblin che male"));
 }
@@ -139,8 +133,7 @@ void AAREnemy::CombatBegin(UPrimitiveComponent* OverlappedComponent, AActor* oth
 		{
 			SetState(EFSMState::EFSM_Attack);
 			float attackTime = FMath::RandRange(minAttackTime, maxAttackTime);
-			GetWorldTimerManager().SetTimer(attackTimer, this,
-				&AAREnemy::Attack, attackTime);
+			GetWorldTimerManager().SetTimer(attackTimer, TimerFunctionDelegate, attackTime, false);
 		}
 	}
 	

@@ -11,6 +11,8 @@
 #include "GameFramework/Character.h"
 #include "ARHero.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FHeroProperties);
+
 UCLASS()
 class FANTASIAUNIMI_API AARHero : public ACharacter
 {
@@ -21,26 +23,29 @@ public:
 	AARHero();
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "HeroSpeed")
 	float Speed = 10.0f;
-	UPROPERTY(EditAnywhere, Category = "Damage")
+	UPROPERTY(EditDefaultsOnly, Category = "Damage")
 	TSubclassOf<UDamageType> damageType;
-	UPROPERTY(EditAnywhere, Category = "Attack")
+	UPROPERTY(EditDefaultsOnly, Category = "ApplyDamageToEnemy")
 	float attackTime = 3.0f;
-	UPROPERTY(EditAnywhere, Category = "Attack")
+	UPROPERTY(EditDefaultsOnly, Category = "ApplyDamageToEnemy")
 	float attackDamage = 10.0f;
-	UPROPERTY(EditAnywhere, Category = "Attack")
+	UPROPERTY(EditDefaultsOnly, Category = "ApplyDamageToEnemy")
 	float attackRadius = 14.0f;
-	FTimerHandle attackTimerHandle;
+	
 	bool bCanAttack = true;
 	UPROPERTY(EditDefaultsOnly, Category= "Life")
 	int heroLife;
+	FTimerHandle attackTimerHandle;
 	int numberOfCoin;
 	TSoftObjectPtr<UUserWidget> LevelMenu;
+	FHeroProperties LifeUpdate;
+	FHeroProperties CoinUpdate;
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	FRotator rotation;
-	FVector oldPos, newPos, direction;
+	FVector direction;
 	UPROPERTY()
 	TArray<AActor*> Actors;
 	FTimerDelegate TimerFunctionDelegate{};
@@ -58,9 +63,9 @@ public:
 	UFUNCTION()
 	void JumpAction();
 	UFUNCTION()
-	void Attack();
+	void ApplyDamageToEnemy();
 	UFUNCTION()
-	void TakeDamageHero(AActor* Actor, float damage, const UDamageType* type, AController* Contr, AActor* a);
+	void TakeDamageFromEnemy(AActor* Actor, float damage, const UDamageType* type, AController* Contr, AActor* a);
 	UFUNCTION()
 	void SetbCanAttack();
 };

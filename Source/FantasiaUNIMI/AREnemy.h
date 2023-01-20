@@ -30,21 +30,21 @@ public:
 	
 	// Sets default values for this character's properties
 	AAREnemy();
-	UPROPERTY(EditAnywhere, Category = "Distances")
+	UPROPERTY(EditDefaultsOnly, Category = "Distances")
 	double FollowDistance = 4.0f;
-	UPROPERTY(EditAnywhere, Category = "Distances")
+	UPROPERTY(EditDefaultsOnly, Category = "Distances")
 	double AttackDistance = 1.0f;
-	UPROPERTY(EditAnywhere, Category = "Hero")
+	UPROPERTY(EditDefaultsOnly, Category = "Hero")
 	TSubclassOf<ACharacter> ARHeroClass;
-	UPROPERTY(EditAnywhere, Category = "Movement")
+	UPROPERTY(EditDefaultsOnly, Category = "Movement")
 	float speed = 1.0f;
-	UPROPERTY(EditAnywhere, Category = "Damage")
+	UPROPERTY(EditDefaultsOnly, Category = "Damage")
 	TSubclassOf<UDamageType> damageType;
 	UPROPERTY(EditDefaultsOnly, Category = "Attack")
 	float minAttackTime;
 	UPROPERTY(EditDefaultsOnly, Category = "Attack")
 	float maxAttackTime;
-	UPROPERTY(EditAnywhere, Category = "Attack")
+	UPROPERTY(EditDefaultsOnly, Category = "Attack")
 	float attackDamage = 10.0f;
 	UPROPERTY(EditDefaultsOnly, Category = "Attack")
 	UAnimMontage* AttackMontage;
@@ -56,20 +56,39 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-	EFSMState enemyState;
 	UPROPERTY()
 	APawn* ARHeroObj;
-	FVector DistanceVector;
-	FRotator rotation;
-	
 	UPROPERTY()
 	UMainAnimInstance* EnemyAnimInstance;
+	FTimerDelegate TimerFunctionDelegate{};
+	EFSMState enemyState;
+	FVector DistanceVector;
+	FRotator rotation;
 	FTimerHandle attackTimer;
 	bool bIsAttacking;
 	
 
 
 public:	
+	FORCEINLINE void SetState(EFSMState newState) { enemyState = newState; }
+	UFUNCTION(BlueprintCallable)
+	void ApplyDamageToHero();
+	UFUNCTION()
+	void TakeDamageFromHero(AActor* Actor, float damage, const UDamageType* type, AController* Contr, AActor* a);
+	UFUNCTION()
+		void FollowBegin(UPrimitiveComponent* OverlappedComponent, AActor* otherActor, UPrimitiveComponent* otherComponent,
+			int otherBodyIndex, bool fromSweep, const FHitResult& sweepResults);
+	UFUNCTION()
+		void FollowEnd(UPrimitiveComponent* OverlappedComponent, AActor* otherActor, UPrimitiveComponent* otherComponent,
+			int otherBodyIndex);
+	UFUNCTION()
+		void CombatBegin(UPrimitiveComponent* OverlappedComponent, AActor* otherActor, UPrimitiveComponent* otherComponent,
+			int otherBodyIndex, bool fromSweep, const FHitResult& sweepResults);
+	UFUNCTION()
+		void CombatEnd(UPrimitiveComponent* OverlappedComponent, AActor* otherActor, UPrimitiveComponent* otherComponent,
+			int otherBodyIndex);
+	UFUNCTION()
+	void Attack();
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
@@ -77,24 +96,6 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	void ExecuteFSM();
 	void CheckDistance(APawn* targetPawn);
-	FORCEINLINE void SetState(EFSMState newState) { enemyState = newState; }
-	UFUNCTION(BlueprintCallable)
-	void ApplyDamageHero();
-	UFUNCTION()
-	void TakeDamageEnemy(AActor* Actor, float damage, const UDamageType* type, AController* Contr, AActor* a);
-	void Attack();
-	UFUNCTION()
-	void FollowBegin(UPrimitiveComponent* OverlappedComponent, AActor* otherActor, UPrimitiveComponent* otherComponent,
-		int otherBodyIndex, bool fromSweep, const FHitResult& sweepResults);
-	UFUNCTION()
-		void FollowEnd(UPrimitiveComponent* OverlappedComponent, AActor* otherActor, UPrimitiveComponent* otherComponent,
-			int otherBodyIndex);
-	UFUNCTION()
-	void CombatBegin(UPrimitiveComponent* OverlappedComponent, AActor* otherActor, UPrimitiveComponent* otherComponent,
-		int otherBodyIndex, bool fromSweep, const FHitResult& sweepResults);
-	UFUNCTION()
-		void CombatEnd(UPrimitiveComponent* OverlappedComponent, AActor* otherActor, UPrimitiveComponent* otherComponent,
-			int otherBodyIndex);
 	
 	
 };
