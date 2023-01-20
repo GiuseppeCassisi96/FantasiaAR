@@ -15,13 +15,10 @@ AARHero::AARHero()
 // Called when the game starts or when spawned
 void AARHero::BeginPlay()
 {
-	
 	Super::BeginPlay();
 	rotation = FRotator::ZeroRotator;
-	oldPos = FVector::Zero();
-	newPos = FVector::Zero();
 	direction = FVector::Zero();
-	OnTakeAnyDamage.AddUniqueDynamic(this, &AARHero::TakeDamageHero);
+	OnTakeAnyDamage.AddUniqueDynamic(this, &AARHero::TakeDamageFromEnemy);
 	TimerFunctionDelegate.BindUFunction(this, "SetbCanAttack");
 	Actors.Add(this);
 }
@@ -43,23 +40,16 @@ void AARHero::ForwardMovement(float inputValue, FVector ARCameraFowardAxe)
 {
 	AddMovementInput(ARCameraFowardAxe, inputValue
 		* Speed * GetWorld()->GetDeltaSeconds());
-	if (GetMovementComponent()->Velocity != FVector::Zero())
-	{
-		rotation = UKismetMathLibrary::FindLookAtRotation(FVector::ForwardVector, 
-			GetMovementComponent()->Velocity);
-	}
+	rotation = UKismetMathLibrary::FindLookAtRotation(FVector::ForwardVector,
+		GetMovementComponent()->Velocity);
 }
 
 void AARHero::RightMovement(float inputValue, FVector ARCameraRightAxe)
 {
 	AddMovementInput(ARCameraRightAxe, inputValue
 		* Speed * GetWorld()->GetDeltaSeconds());
-	if (GetMovementComponent()->Velocity != FVector::Zero())
-	{
-		rotation = UKismetMathLibrary::FindLookAtRotation(FVector::ForwardVector, 
-			GetMovementComponent()->Velocity);
-	}
-
+	rotation = UKismetMathLibrary::FindLookAtRotation(FVector::ForwardVector,
+		GetMovementComponent()->Velocity);
 }
 
 void AARHero::JumpAction()
@@ -67,7 +57,7 @@ void AARHero::JumpAction()
 	Jump();
 }
 
-void AARHero::Attack()
+void AARHero::ApplyDamageToEnemy()
 {
 	if(bCanAttack)
 	{
@@ -79,9 +69,10 @@ void AARHero::Attack()
 	}
 }
 
-void AARHero::TakeDamageHero(AActor* Actor, float damage, const UDamageType* type, AController* Contr, AActor* a)
+void AARHero::TakeDamageFromEnemy(AActor* Actor, float damage, const UDamageType* type, AController* Contr, AActor* a)
 {
 	heroLife -= damage;
+	LifeUpdate.Broadcast();
 }
 
 void AARHero::SetbCanAttack()

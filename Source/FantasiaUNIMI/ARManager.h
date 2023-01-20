@@ -11,6 +11,12 @@
 #include "GameFramework/Pawn.h"
 #include "ARManager.generated.h"
 
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FUIEvents);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FHeroMovements, float, inputValue, FVector, cameraAxe);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FHeroJump);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FHeroAttack);
+
 UCLASS()
 class FANTASIAUNIMI_API AARManager : public APawn
 {
@@ -38,8 +44,12 @@ public:
 	bool bScanIsComplete;
 	UPROPERTY(BlueprintReadWrite)
 	bool bIsSpawned;
-	
-
+	FUIEvents OnScanIsComplete;
+	FUIEvents OnIsSpawned;
+	FHeroMovements OnForwardMovement;
+	FHeroMovements OnRightMovement;
+	FHeroJump OnJump;
+	FHeroAttack OnAttack;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

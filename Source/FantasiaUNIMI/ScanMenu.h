@@ -14,6 +14,8 @@
 /**
  * 
  */
+
+
 UCLASS()
 class FANTASIAUNIMI_API UScanMenu : public UUserWidget
 {
@@ -37,8 +39,16 @@ public:
 	UPROPERTY()
 	AARManager* Manager;
 	virtual void NativeConstruct() override;
-	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 	UFUNCTION()
 	void StartSession();
+
+	UFUNCTION()
+	void ScanIsCompleteEvent();
+	UFUNCTION()
+	void IsSpawnedEvent();
+	UFUNCTION()
+	void UpdateHeroLifeUI();
+	UFUNCTION()
+	void UpdateHeroCoinUI();
 	
 };
