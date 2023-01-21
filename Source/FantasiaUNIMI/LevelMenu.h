@@ -9,7 +9,7 @@
 #include "Components/CircularThrobber.h"
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
-#include "ScanMenu.generated.h"
+#include "LevelMenu.generated.h"
 
 /**
  * 
@@ -24,6 +24,10 @@ public:
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UButton* ScanButton;
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UButton* PauseButton;
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UButton* MenuButton;
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UTextBlock* LifeText;
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UTextBlock* CoinText;
@@ -36,8 +40,11 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Category = "ARManager")
 	TSoftObjectPtr<APawn> ManagerObjectPtr;
+	UPROPERTY(EditDefaultsOnly, Category = "Level")
+	TSoftObjectPtr<UWorld> MenuLevel;
 	UPROPERTY()
 	AARManager* Manager;
+	bool bIsInPause;
 	virtual void NativeConstruct() override;
 	UFUNCTION()
 	void StartSession();
@@ -50,5 +57,10 @@ public:
 	void UpdateHeroLifeUI();
 	UFUNCTION()
 	void UpdateHeroCoinUI();
+	UFUNCTION()
+	void PauseFunction();
+
+	UFUNCTION()
+	void GoToTheMenu();
 	
 };

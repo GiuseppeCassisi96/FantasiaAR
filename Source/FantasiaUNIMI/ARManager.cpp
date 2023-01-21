@@ -17,7 +17,7 @@ void AARManager::BeginPlay()
 {
 	Super::BeginPlay();
 
-	PlayerController = UGameplayStatics::GetPlayerController(this, 0);
+	PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 	PlayerController->Possess(this);
 	PlayerController->ActivateTouchInterface(nullptr);
 	int xSize, ySize;

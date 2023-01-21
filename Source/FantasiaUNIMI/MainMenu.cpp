@@ -14,10 +14,10 @@ void UMainMenu::NativeConstruct()
 
 void UMainMenu::StartsTutorial()
 {
-	UGameplayStatics::OpenLevelBySoftObjectPtr(this, Tutorial);
+	UGameplayStatics::OpenLevelBySoftObjectPtr(GetWorld(), Tutorial);
 }
 
 void UMainMenu::StartsStory()
 {
-	UGameplayStatics::OpenLevelBySoftObjectPtr(this, Story);
+	UGameplayStatics::OpenLevelBySoftObjectPtr(GetWorld(), Story);
 }

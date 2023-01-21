@@ -21,8 +21,6 @@ public:
 	UButton* PlayButton;
 	UPROPERTY(EditDefaultsOnly, meta = (BindWidget))
 	UButton* TutorialButton;
-	UPROPERTY(EditDefaultsOnly, meta = (BindWidget))
-	UButton* QuitButton;
 	UPROPERTY(EditDefaultsOnly, Category="Levels")
 	TSoftObjectPtr<UWorld> Tutorial;
 	UPROPERTY(EditDefaultsOnly, Category = "Levels")

@@ -13,5 +13,5 @@
 
  void UStoryMenu::InitStory()
  {
-	 UGameplayStatics::OpenLevelBySoftObjectPtr(this, FirstLevel);
+	 UGameplayStatics::OpenLevelBySoftObjectPtr(GetWorld(), FirstLevel);
  }
