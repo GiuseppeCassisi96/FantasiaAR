@@ -11,13 +11,19 @@ void UScanMenu::NativeConstruct()
 	ScanButton->OnClicked.AddUniqueDynamic(this, &UScanMenu::StartSession);
 	PauseButton->OnClicked.AddUniqueDynamic(this, &UScanMenu::PauseFunction);
 	MenuButton->OnClicked.AddUniqueDynamic(this, &UScanMenu::UScanMenu::GoToTheMenu);
-	Manager = Cast<AARManager>(ManagerObjectPtr.Get());
-	Manager->OnScanIsComplete.AddDynamic(this, &UScanMenu::ScanIsCompleteEvent);
-	Manager->OnIsSpawned.AddDynamic(this, &UScanMenu::IsSpawnedEvent);
+	DialogueButton->OnClicked.AddUniqueDynamic(this, &UScanMenu::UpdateDialogue);
 }
 
 void UScanMenu::StartSession()
 {
+	Manager = Cast<AARManager>(UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetPawn());
+	Manager->OnScanIsComplete.AddDynamic(this, &UScanMenu::ScanIsCompleteEvent);
+	Manager->OnIsSpawned.AddDynamic(this, &UScanMenu::IsSpawnedEvent);
+	for (int i = 0; i < Manager->DialoguePoints.Num(); i++)
+	{
+		Cast<AARDialoguePoint>(Manager->DialoguePoints[i].Get())->StartDialogue.AddDynamic(this, &UScanMenu::OnStartDialogue);
+		Cast<AARDialoguePoint>(Manager->DialoguePoints[i].Get())->EndDialogue.AddDynamic(this, &UScanMenu::OnEndDialogue);
+	}
 	UARBlueprintLibrary::StartARSession(Manager->ARSession);
 	ScanButton->SetVisibility(ESlateVisibility::Hidden);
 	Scanning->SetVisibility(ESlateVisibility::Visible);
@@ -72,6 +78,50 @@ void UScanMenu::GoToTheMenu()
 	UARBlueprintLibrary::StopARSession();
 	UGameplayStatics::OpenLevelBySoftObjectPtr(GetWorld(), MenuLevel);
 }
+
+void UScanMenu::OnStartDialogue(TArray<FString> dialogues, AActor* DialoguePoint)
+{
+	currentDialoguePoint = Cast<AARDialoguePoint>(DialoguePoint);
+	if(!currentDialoguePoint->bDialogueIsComplete)
+	{
+		TextsDialogues = std::move(dialogues);
+		DialogueBorder->SetVisibility(ESlateVisibility::Visible);
+		DialogueText->SetVisibility(ESlateVisibility::Visible);
+		DialogueText->SetText(FText::FromString(TextsDialogues[0]));
+		if (TextsDialogues.Num() > 1)
+		{
+			DialogueButton->SetVisibility(ESlateVisibility::Visible);
+		}
+		currentDialoguePoint->dialogueIndex++;
+		if (currentDialoguePoint->dialogueIndex == TextsDialogues.Num())
+		{
+			currentDialoguePoint->bDialogueIsComplete = true;
+		}
+	}
+}
+
+void UScanMenu::OnEndDialogue(AActor* DialoguePoint)
+{
+	DialogueBorder->SetVisibility(ESlateVisibility::Hidden);
+	DialogueText->SetVisibility(ESlateVisibility::Hidden);
+	DialogueButton->SetVisibility(ESlateVisibility::Hidden);
+	currentDialoguePoint->dialogueIndex = 0;
+}
+
+void UScanMenu::UpdateDialogue()
+{
+	if (currentDialoguePoint->dialogueIndex < TextsDialogues.Num())
+	{
+		DialogueText->SetText(FText::FromString(TextsDialogues[currentDialoguePoint->dialogueIndex]));
+		currentDialoguePoint->dialogueIndex++;
+		if(currentDialoguePoint->dialogueIndex == TextsDialogues.Num())
+		{
+			currentDialoguePoint->bDialogueIsComplete = true;
+		}
+	}
+	
+}
+
 
 
 

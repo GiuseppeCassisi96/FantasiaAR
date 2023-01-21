@@ -44,6 +44,8 @@ public:
 	bool bScanIsComplete;
 	UPROPERTY(BlueprintReadWrite)
 	bool bIsSpawned;
+	UPROPERTY(EditAnywhere, Category = "DialoguePoints")
+	TArray<TSoftObjectPtr<AActor>> DialoguePoints;
 	FUIEvents OnScanIsComplete;
 	FUIEvents OnIsSpawned;
 	FHeroMovements OnForwardMovement;
