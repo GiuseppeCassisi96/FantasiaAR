@@ -17,7 +17,7 @@ class FANTASIAUNIMI_API AARDialoguePoint : public AActor
 public:	
 	// Sets default values for this actor's properties
 	AARDialoguePoint();
-	UPROPERTY(EditDefaultsOnly, Category="Trigger")
+	UPROPERTY(EditAnywhere, Category="Trigger")
 	USphereComponent* DialogueSphere;
 	UPROPERTY(EditDefaultsOnly, Category = "Trigger")
 	UStaticMeshComponent* DialogueMesh;
