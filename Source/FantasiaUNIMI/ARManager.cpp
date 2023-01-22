@@ -16,9 +16,12 @@ AARManager::AARManager()
 void AARManager::BeginPlay()
 {
 	Super::BeginPlay();
-	APlayerController* controller = UGameplayStatics::GetPlayerController(this, 0);
+
+	PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	PlayerController->Possess(this);
+	PlayerController->ActivateTouchInterface(nullptr);
 	int xSize, ySize;
-	controller->GetViewportSize(xSize, ySize);
+	PlayerController->GetViewportSize(xSize, ySize);
 	ScreenSize.X = static_cast<float>(xSize);
 	ScreenSize.Y = static_cast<float>(ySize);
 	ScreenSize *= 0.5f;
@@ -34,13 +37,13 @@ void AARManager::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	if (!bScanIsComplete)
 	{
-
 		Results = UARBlueprintLibrary::GetAllGeometries();
 		if (Results.Num() > 0)
 		{
 			ARCorePlane = Results[0];
 			planeTr = ARCorePlane->GetLocalToWorldTransform();
 			bScanIsComplete = true;
+			OnScanIsComplete.Broadcast();
 		}
 	}
 	else
@@ -68,8 +71,6 @@ void AARManager::InputTouch(ETouchIndex::Type fingerIndex, FVector location)
 {
 	if (ARCorePlane != nullptr && !bIsSpawned)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, TEXT("ENTRY"));
-
 		TArray<AActor*> Actors;
 		ARLevelObj.Get()->GetAttachedActors(Actors, true, true);
 		for (auto const child : Actors)
@@ -77,7 +78,6 @@ void AARManager::InputTouch(ETouchIndex::Type fingerIndex, FVector location)
 			child->SetActorHiddenInGame(false);
 		}
 
-		
 		ARLevelObj.Get()->SetActorLocation(planeTr.GetLocation());
 		ARLevelObj.Get()->SetActorRotation(planeTr.GetRotation());
 		const FVector SpawnLocation = ARLevelObj.Get()->GetActorLocation();
@@ -89,38 +89,37 @@ void AARManager::InputTouch(ETouchIndex::Type fingerIndex, FVector location)
 		{
 			static_cast<AARWaypoint*>(waypoint.Get())->SpawCharacter();
 		}
+		PlayerController->ActivateTouchInterface(TouchInterface);
+		OnIsSpawned.Broadcast();
+		ARHeroObj->CoinUpdate.Broadcast();
+		ARHeroObj->LifeUpdate.Broadcast();
+		OnForwardMovement.AddDynamic(ARHeroObj, &AARHero::ForwardMovement);
+		OnRightMovement.AddDynamic(ARHeroObj, &AARHero::RightMovement);
+		OnJump.AddDynamic(ARHeroObj, &AARHero::JumpAction);
+		OnAttack.AddDynamic(ARHeroObj, &AARHero::ApplyDamageToEnemy);
 	}
 
 }
 
-
 //Manage Hero movements
 void AARManager::ForwardMovement(float inputValue)
 {
-	if (ARHeroObj != nullptr)
-		ARHeroObj->ForwardMovement(inputValue, 
-			GetTransform().GetUnitAxis(EAxis::Type::X));
-
-	
-
+	OnForwardMovement.Broadcast(inputValue, GetTransform().GetUnitAxis(EAxis::Type::X));
 }
 
 void AARManager::RightMovement(float inputValue)
 {
-	if (ARHeroObj != nullptr)
-		ARHeroObj->RightMovement(inputValue, 
-			GetTransform().GetUnitAxis(EAxis::Type::Y));
+	OnForwardMovement.Broadcast(inputValue, GetTransform().GetUnitAxis(EAxis::Type::Y));
 }
 
 void AARManager::JumpAction()
 {
-	if (ARHeroObj != nullptr)
-		ARHeroObj->JumpAction();
+	OnJump.Broadcast();
 }
 
 void AARManager::AttackAction()
 {
-	if (ARHeroObj != nullptr)
-		ARHeroObj->Attack();
+	OnAttack.Broadcast();
 }
+
 

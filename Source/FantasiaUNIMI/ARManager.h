@@ -11,6 +11,12 @@
 #include "GameFramework/Pawn.h"
 #include "ARManager.generated.h"
 
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FUIEvents);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FHeroMovements, float, inputValue, FVector, cameraAxe);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FHeroJump);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FHeroAttack);
+
 UCLASS()
 class FANTASIAUNIMI_API AARManager : public APawn
 {
@@ -25,7 +31,8 @@ public:
 	UCameraComponent* CameraComponent;
 	UPROPERTY(EditAnywhere, Category = "Hero")
 	TSubclassOf<AARHero> ARHero;
-
+	UPROPERTY(EditDefaultsOnly, Category = "Touch interface")
+	UTouchInterface* TouchInterface;
 	
 	UPROPERTY()
 	AARHero* ARHeroObj;
@@ -33,22 +40,33 @@ public:
 	TSoftObjectPtr<APawn> ARLevelObj;
 	UPROPERTY(EditAnywhere, Category= "Waypoints")
 	TArray<TSoftObjectPtr<AActor>> wayPoints;
-
+	UPROPERTY(BlueprintReadWrite)
+	bool bScanIsComplete;
+	UPROPERTY(BlueprintReadWrite)
+	bool bIsSpawned;
+	UPROPERTY(EditAnywhere, Category = "DialoguePoints")
+	TArray<TSoftObjectPtr<AActor>> DialoguePoints;
+	FUIEvents OnScanIsComplete;
+	FUIEvents OnIsSpawned;
+	FHeroMovements OnForwardMovement;
+	FHeroMovements OnRightMovement;
+	FHeroJump OnJump;
+	FHeroAttack OnAttack;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	UPROPERTY()
 	UARTrackedGeometry* ARCorePlane;
-	UPROPERTY(BlueprintReadWrite)
-	bool bScanIsComplete;
+	
 	UPROPERTY(BlueprintReadWrite)
 	bool bIsTracked;
-	UPROPERTY(BlueprintReadWrite)
-	bool bIsSpawned;
 	FTransform planeTr;
 	FVector2D ScreenSize;
+	UPROPERTY()
 	TArray<UARTrackedGeometry*> Results;
 	FTimerHandle attackTimerHandle;
+	UPROPERTY()
+	APlayerController* PlayerController;
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
