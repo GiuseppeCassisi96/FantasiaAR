@@ -45,6 +45,10 @@ public:
 	UImage* Coin;
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UImage* Heart;
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UImage* Souls;
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UTextBlock* SoulText;
 	UPROPERTY(EditDefaultsOnly, Category = "Level")
 	TSoftObjectPtr<UWorld> MenuLevel;
 	UPROPERTY()
@@ -65,6 +69,8 @@ public:
 	void UpdateHeroLifeUI();
 	UFUNCTION()
 	void UpdateHeroCoinUI();
+	UFUNCTION()
+	void UpdateHeroSoulsUI();
 	UFUNCTION()
 	void PauseFunction();
 

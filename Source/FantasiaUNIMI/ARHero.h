@@ -31,15 +31,21 @@ public:
 	float attackDamage = 10.0f;
 	UPROPERTY(EditDefaultsOnly, Category = "ApplyDamageToEnemy")
 	float attackRadius = 14.0f;
-	
-	bool bCanAttack = true;
+
+	UPROPERTY(BlueprintReadWrite, Category="AnimState")
+	bool bAttackState;
 	UPROPERTY(EditDefaultsOnly, Category= "Life")
 	int heroLife;
+	UPROPERTY(EditDefaultsOnly, Category = "Life")
+	int heroSouls;
+	UPROPERTY(EditDefaultsOnly, Category = "AnimMontage")
+	UAnimMontage* AttackMontage;
 	FTimerHandle attackTimerHandle;
 	int numberOfCoin;
 	TSoftObjectPtr<UUserWidget> LevelMenu;
 	FHeroProperties LifeUpdate;
 	FHeroProperties CoinUpdate;
+	FHeroProperties SoulsUpdate;
 
 protected:
 	// Called when the game starts or when spawned
@@ -48,7 +54,8 @@ protected:
 	FVector direction;
 	UPROPERTY()
 	TArray<AActor*> Actors;
-	FTimerDelegate TimerFunctionDelegate{};
+	UPROPERTY()
+	UAnimInstance* HeroAnimInstance;
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -62,12 +69,14 @@ public:
 	void RightMovement(float inputValue, FVector ARCameraRightAxe);
 	UFUNCTION()
 	void JumpAction();
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void ApplyDamageToEnemy();
 	UFUNCTION()
 	void TakeDamageFromEnemy(AActor* Actor, float damage, const UDamageType* type, AController* Contr, AActor* a);
 	UFUNCTION()
-	void SetbCanAttack();
+	void Attack();
+
+	void IncrementCoin();
 };
 
 

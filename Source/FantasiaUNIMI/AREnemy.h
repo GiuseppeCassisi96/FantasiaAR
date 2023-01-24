@@ -18,7 +18,8 @@ enum class EFSMState
 {
 	EFSM_Follow,
 	EFSM_Attack,
-	EFSM_Idle
+	EFSM_Idle,
+	EFSM_Dead
 };
 
 UCLASS()
@@ -46,8 +47,8 @@ public:
 	float maxAttackTime;
 	UPROPERTY(EditDefaultsOnly, Category = "Attack")
 	float attackDamage = 10.0f;
-	UPROPERTY(EditDefaultsOnly, Category = "Attack")
-	UAnimMontage* AttackMontage;
+	UPROPERTY(EditDefaultsOnly, Category = "AnimMontage")
+	UAnimMontage* CombatMontage;
 	UPROPERTY(EditDefaultsOnly,Category="IA")
 	USphereComponent* followSphere;
 	UPROPERTY(EditDefaultsOnly, Category = "IA")
@@ -60,12 +61,16 @@ protected:
 	APawn* ARHeroObj;
 	UPROPERTY()
 	UMainAnimInstance* EnemyAnimInstance;
-	FTimerDelegate TimerFunctionDelegate{};
+	FTimerDelegate AttackTimerDelegate{};
+	FTimerDelegate DeathTimerDelegate{};
 	EFSMState enemyState;
 	FVector DistanceVector;
 	FRotator rotation;
 	FTimerHandle attackTimer;
+	FTimerHandle deathTimer;
 	bool bIsAttacking;
+	//bool bIsDead;
+	
 	
 
 
@@ -96,6 +101,9 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	void ExecuteFSM();
 	void CheckDistance(APawn* targetPawn);
+	UFUNCTION()
+	void Death();
+
 	
 	
 };

@@ -32,7 +32,8 @@ void AAREnemy::BeginPlay()
 		ARHeroClass));
 	OnTakeAnyDamage.AddDynamic(this, &AAREnemy::TakeDamageFromHero);
 	EnemyAnimInstance = static_cast<UMainAnimInstance*>(GetMesh()->GetAnimInstance());
-	TimerFunctionDelegate.BindUFunction(this, "Attack");
+	AttackTimerDelegate.BindUFunction(this, "Attack");
+	DeathTimerDelegate.BindUFunction(this, "Death");
 }
 
 // Called every frame
@@ -54,6 +55,11 @@ void AAREnemy::CheckDistance(APawn* targetPawn)
 	DistanceVector = UKismetMathLibrary::Vector_NormalUnsafe( targetPawn->GetActorLocation() - GetActorLocation());
 }
 
+void AAREnemy::Death()
+{
+	Destroy();
+}
+
 void AAREnemy::ExecuteFSM()
 {
 	CheckDistance(ARHeroObj);
@@ -72,28 +78,31 @@ void AAREnemy::ExecuteFSM()
 
 void AAREnemy::ApplyDamageToHero()
 {
-	if(enemyState == EFSMState::EFSM_Attack)
+	if(enemyState == EFSMState::EFSM_Attack && enemyState != EFSMState::EFSM_Dead)
 	{
 		UGameplayStatics::ApplyDamage(ARHeroObj, attackDamage,
 			GetController(), this, damageType);
 		float attackTime = FMath::RandRange(minAttackTime, maxAttackTime);
-		GetWorldTimerManager().SetTimer(attackTimer, TimerFunctionDelegate,attackTime,false);
+		GetWorldTimerManager().SetTimer(attackTimer, AttackTimerDelegate,attackTime,false);
 	}
 		
 }
 
 void AAREnemy::TakeDamageFromHero(AActor* Actor, float damage, const UDamageType* type, AController* Contr, AActor* a)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Red, TEXT("Goblin che male"));
+	SetState(EFSMState::EFSM_Dead);
+	EnemyAnimInstance->Montage_Play(CombatMontage);
+	EnemyAnimInstance->Montage_JumpToSection(FName("Death"));
+	GetWorldTimerManager().SetTimer(deathTimer, DeathTimerDelegate, 2.0f, false);
 }
 
 void AAREnemy::Attack()
 {
 	bIsAttacking = true;
-	if(EnemyAnimInstance)
+	if(EnemyAnimInstance && enemyState != EFSMState::EFSM_Dead)
 	{
-		EnemyAnimInstance->Montage_Play(AttackMontage);
-		EnemyAnimInstance->Montage_JumpToSection(FName("Attack1"), AttackMontage);
+		EnemyAnimInstance->Montage_Play(CombatMontage);
+		EnemyAnimInstance->Montage_JumpToSection(FName("Attack1"), CombatMontage);
 	}
 }
 
@@ -103,7 +112,7 @@ void AAREnemy::FollowBegin(UPrimitiveComponent* OverlappedComponent, AActor* oth
 	if (otherActor)
 	{
 		AARHero* hero = Cast<AARHero>(otherActor);
-		if (hero)
+		if (hero && enemyState != EFSMState::EFSM_Dead)
 		{
 			SetState(EFSMState::EFSM_Follow);
 		}
@@ -116,7 +125,7 @@ void AAREnemy::FollowEnd(UPrimitiveComponent* OverlappedComponent, AActor* other
 	if (otherActor)
 	{
 		AARHero* hero = Cast<AARHero>(otherActor);
-		if (hero)
+		if (hero && enemyState != EFSMState::EFSM_Dead)
 		{
 			SetState(EFSMState::EFSM_Idle);
 		}
@@ -129,11 +138,11 @@ void AAREnemy::CombatBegin(UPrimitiveComponent* OverlappedComponent, AActor* oth
 	if(otherActor)
 	{
 		AARHero* hero = Cast<AARHero>(otherActor);
-		if(hero)
+		if(hero && enemyState != EFSMState::EFSM_Dead)
 		{
 			SetState(EFSMState::EFSM_Attack);
 			float attackTime = FMath::RandRange(minAttackTime, maxAttackTime);
-			GetWorldTimerManager().SetTimer(attackTimer, TimerFunctionDelegate, attackTime, false);
+			GetWorldTimerManager().SetTimer(attackTimer, AttackTimerDelegate, attackTime, false);
 		}
 	}
 	
@@ -145,7 +154,7 @@ void AAREnemy::CombatEnd(UPrimitiveComponent* OverlappedComponent, AActor* other
 	if (otherActor)
 	{
 		AARHero* hero = Cast<AARHero>(otherActor);
-		if (hero)
+		if (hero && enemyState != EFSMState::EFSM_Dead)
 		{
 			bIsAttacking = false;
 			SetState(EFSMState::EFSM_Follow);

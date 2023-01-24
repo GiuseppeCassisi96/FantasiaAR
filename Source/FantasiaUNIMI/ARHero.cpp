@@ -3,6 +3,10 @@
 
 #include "ARHero.h"
 
+#include "ARBlueprintLibrary.h"
+#include "Animation/AnimInstance.h"
+#include "Components/CapsuleComponent.h"
+#include "Components/SkeletalMeshComponent.h"
 
 
 // Sets default values
@@ -19,8 +23,8 @@ void AARHero::BeginPlay()
 	rotation = FRotator::ZeroRotator;
 	direction = FVector::Zero();
 	OnTakeAnyDamage.AddUniqueDynamic(this, &AARHero::TakeDamageFromEnemy);
-	TimerFunctionDelegate.BindUFunction(this, "SetbCanAttack");
 	Actors.Add(this);
+	HeroAnimInstance = GetMesh()->GetAnimInstance();
 }
 
 // Called every frame
@@ -59,25 +63,53 @@ void AARHero::JumpAction()
 
 void AARHero::ApplyDamageToEnemy()
 {
-	if(bCanAttack)
-	{
-		bCanAttack = false;
-		GetWorldTimerManager().SetTimer(attackTimerHandle, TimerFunctionDelegate, attackTime, false);
-		UGameplayStatics::ApplyRadialDamage(this, 10.0f, GetActorLocation(),
-			attackRadius, damageType, Actors);
-		
-	}
+	UGameplayStatics::ApplyRadialDamage(this, 10.0f, GetActorLocation(),
+		attackRadius, damageType, Actors);
 }
 
 void AARHero::TakeDamageFromEnemy(AActor* Actor, float damage, const UDamageType* type, AController* Contr, AActor* a)
 {
 	heroLife -= damage;
+	if (heroLife <= 0)
+	{
+		heroSouls--;
+		heroLife = 100;
+		if(heroSouls <= 0)
+		{
+			UARBlueprintLibrary::StopARSession();
+			UGameplayStatics::OpenLevel(GetWorld(), FName("MainMenu"));
+			return;
+		}
+		SoulsUpdate.Broadcast();
+	}
 	LifeUpdate.Broadcast();
 }
 
-void AARHero::SetbCanAttack()
+void AARHero::Attack()
 {
-	bCanAttack = true;
+	if(!bAttackState)
+	{
+		bAttackState = true;
+		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("START"));
+		HeroAnimInstance->Montage_Play(AttackMontage);
+		HeroAnimInstance->Montage_JumpToSection(FName("Attack"));
+	}
+}
+
+
+void AARHero::IncrementCoin()
+{
+	numberOfCoin++;
+	if(numberOfCoin >= 10)
+	{
+		numberOfCoin = 0;
+		if(heroLife <= 90)
+		{
+			heroLife += 10;
+			LifeUpdate.Broadcast();
+		}
+		
+	}
 }
 
 

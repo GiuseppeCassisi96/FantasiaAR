@@ -77,9 +77,18 @@ void AARManager::InputTouch(ETouchIndex::Type fingerIndex, FVector location)
 		{
 			child->SetActorHiddenInGame(false);
 		}
-
-		ARLevelObj.Get()->SetActorLocation(planeTr.GetLocation());
+		FVector distance = GetActorLocation() - planeTr.GetLocation();
+		if(distance.Z < 40.0f)
+		{
+			ARLevelObj.Get()->SetActorLocation(planeTr.GetLocation());
+		}
+		else
+		{
+			ARLevelObj.Get()->SetActorLocation(planeTr.GetLocation() + FVector(0.0f, 0.0f, 50.0f));
+		}
 		ARLevelObj.Get()->SetActorRotation(planeTr.GetRotation());
+		
+		
 		const FVector SpawnLocation = ARLevelObj.Get()->GetActorLocation();
 		GetWorld()->SpawnActor(ARHero, &SpawnLocation);
 		ARHeroObj = static_cast<AARHero*>(UGameplayStatics::GetActorOfClass(this, ARHero));
@@ -93,10 +102,11 @@ void AARManager::InputTouch(ETouchIndex::Type fingerIndex, FVector location)
 		OnIsSpawned.Broadcast();
 		ARHeroObj->CoinUpdate.Broadcast();
 		ARHeroObj->LifeUpdate.Broadcast();
+		ARHeroObj->SoulsUpdate.Broadcast();
 		OnForwardMovement.AddDynamic(ARHeroObj, &AARHero::ForwardMovement);
 		OnRightMovement.AddDynamic(ARHeroObj, &AARHero::RightMovement);
 		OnJump.AddDynamic(ARHeroObj, &AARHero::JumpAction);
-		OnAttack.AddDynamic(ARHeroObj, &AARHero::ApplyDamageToEnemy);
+		OnAttack.AddDynamic(ARHeroObj, &AARHero::AARHero::Attack);
 	}
 
 }
@@ -109,7 +119,7 @@ void AARManager::ForwardMovement(float inputValue)
 
 void AARManager::RightMovement(float inputValue)
 {
-	OnForwardMovement.Broadcast(inputValue, GetTransform().GetUnitAxis(EAxis::Type::Y));
+	OnRightMovement.Broadcast(inputValue, GetTransform().GetUnitAxis(EAxis::Type::Y));
 }
 
 void AARManager::JumpAction()

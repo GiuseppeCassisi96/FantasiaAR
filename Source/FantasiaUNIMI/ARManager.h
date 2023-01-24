@@ -64,7 +64,6 @@ protected:
 	FVector2D ScreenSize;
 	UPROPERTY()
 	TArray<UARTrackedGeometry*> Results;
-	FTimerHandle attackTimerHandle;
 	UPROPERTY()
 	APlayerController* PlayerController;
 public:	
