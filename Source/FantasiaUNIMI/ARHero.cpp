@@ -32,6 +32,7 @@ void AARHero::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	SetActorRotation(FRotator(0.0f, rotation.Yaw, 0.0f));
+	
 }
 
 // Called to bind functionality to input
@@ -60,6 +61,7 @@ void AARHero::JumpAction()
 {
 	Jump();
 }
+
 
 void AARHero::ApplyDamageToEnemy()
 {

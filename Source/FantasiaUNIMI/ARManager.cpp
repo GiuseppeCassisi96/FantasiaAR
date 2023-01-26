@@ -106,7 +106,7 @@ void AARManager::InputTouch(ETouchIndex::Type fingerIndex, FVector location)
 		OnForwardMovement.AddDynamic(ARHeroObj, &AARHero::ForwardMovement);
 		OnRightMovement.AddDynamic(ARHeroObj, &AARHero::RightMovement);
 		OnJump.AddDynamic(ARHeroObj, &AARHero::JumpAction);
-		OnAttack.AddDynamic(ARHeroObj, &AARHero::AARHero::Attack);
+		OnAttack.AddDynamic(ARHeroObj, &AARHero::Attack);
 	}
 
 }
@@ -126,6 +126,7 @@ void AARManager::JumpAction()
 {
 	OnJump.Broadcast();
 }
+
 
 void AARManager::AttackAction()
 {

@@ -26,6 +26,10 @@ public:
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UButton* ScanButton;
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UButton* AButton;
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UButton* BButton;
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UButton* PauseButton;
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UButton* DialogueButton;

@@ -43,6 +43,10 @@ void UScanMenu::IsSpawnedEvent()
 	CoinText->SetVisibility(ESlateVisibility::Visible);
 	SoulText->SetVisibility(ESlateVisibility::Visible);
 	PauseButton->SetVisibility(ESlateVisibility::Visible);
+	AButton->SetVisibility(ESlateVisibility::Visible);
+	BButton->SetVisibility(ESlateVisibility::Visible);
+	AButton->OnPressed.AddDynamic(Manager, &AARManager::JumpAction);
+	BButton->OnPressed.AddDynamic(Manager, &AARManager::AttackAction);
 	Manager->ARHeroObj->LifeUpdate.AddDynamic(this, &UScanMenu::UpdateHeroLifeUI);
 	Manager->ARHeroObj->CoinUpdate.AddDynamic(this, &UScanMenu::UpdateHeroCoinUI);
 	Manager->ARHeroObj->SoulsUpdate.AddDynamic(this, &UScanMenu::UpdateHeroSoulsUI);

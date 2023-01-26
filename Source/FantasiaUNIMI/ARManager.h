@@ -75,6 +75,8 @@ public:
 	void InputTouch(ETouchIndex::Type fingerIndex, FVector location);
 	void ForwardMovement(float inputValue);
 	void RightMovement(float inputValue);
+	UFUNCTION()
 	void JumpAction();
+	UFUNCTION()
 	void AttackAction();
 };
