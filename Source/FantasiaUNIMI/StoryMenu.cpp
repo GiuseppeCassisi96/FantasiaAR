@@ -3,6 +3,7 @@
 
 #include "StoryMenu.h"
 
+#include "ARSaveGame.h"
 #include "Kismet/GameplayStatics.h"
 
  void UStoryMenu::NativeConstruct()
@@ -13,5 +14,13 @@
 
  void UStoryMenu::InitStory()
  {
+	 UARSaveGame* SaveGameInstance = Cast<UARSaveGame>(UGameplayStatics::CreateSaveGameObject(
+		 UARSaveGame::StaticClass()));
+	 SaveGameInstance->CharacterData.life = 100;
+	 SaveGameInstance->CharacterData.coin = 0;
+	 SaveGameInstance->CharacterData.souls = 3;
+	 SaveGameInstance->CharacterData.LevelToLoad = FirstLevel.Get();
+	 UGameplayStatics::SaveGameToSlot(SaveGameInstance, SaveGameInstance->UserName,
+		 SaveGameInstance->UserIndex);
 	 UGameplayStatics::OpenLevelBySoftObjectPtr(GetWorld(), FirstLevel);
  }

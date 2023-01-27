@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "ARManager.h"
+#include "SavePoint.h"
 #include "ARDialoguePoint.h"
 #include "Components/Button.h"
 #include "Components/CircularThrobber.h"
@@ -43,6 +44,8 @@ public:
 	UTextBlock* DialogueText;
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UTextBlock* CoinText;
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UTextBlock* SaveText;
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UCircularThrobber* Scanning;
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
@@ -87,5 +90,9 @@ public:
 	void OnEndDialogue(AActor* DialoguePoint);
 	UFUNCTION()
 	void UpdateDialogue();
+	UFUNCTION()
+	void VisibleSaveText();
+	UFUNCTION()
+	void HiddenSaveText();
 	
 };

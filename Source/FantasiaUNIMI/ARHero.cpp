@@ -92,7 +92,6 @@ void AARHero::Attack()
 	if(!bAttackState)
 	{
 		bAttackState = true;
-		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("START"));
 		HeroAnimInstance->Montage_Play(AttackMontage);
 		HeroAnimInstance->Montage_JumpToSection(FName("Attack"));
 	}
@@ -111,6 +110,33 @@ void AARHero::IncrementCoin()
 			LifeUpdate.Broadcast();
 		}
 		
+	}
+}
+
+void AARHero::SaveGame()
+{
+	UARSaveGame* SaveGameInstance = Cast<UARSaveGame>(UGameplayStatics::CreateSaveGameObject(
+		UARSaveGame::StaticClass()));
+	SaveGameInstance->CharacterData.life = heroLife;
+	SaveGameInstance->CharacterData.coin = numberOfCoin;
+	SaveGameInstance->CharacterData.souls = heroSouls;
+	SaveGameInstance->CharacterData.LevelToLoad = GetWorld();
+	UGameplayStatics::SaveGameToSlot(SaveGameInstance, SaveGameInstance->UserName, 
+		SaveGameInstance->UserIndex);
+	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("SAVE"));
+}
+
+void AARHero::LoadGame()
+{
+	UARSaveGame* LoadGameInstance = Cast<UARSaveGame>(UGameplayStatics::CreateSaveGameObject(
+		UARSaveGame::StaticClass()));
+	LoadGameInstance = Cast<UARSaveGame>(UGameplayStatics::LoadGameFromSlot(LoadGameInstance->UserName, 
+		LoadGameInstance->UserIndex));
+	if (LoadGameInstance != nullptr && GetWorld() == LoadGameInstance->CharacterData.LevelToLoad)
+	{
+		heroLife = LoadGameInstance->CharacterData.life;
+		numberOfCoin = LoadGameInstance->CharacterData.coin;
+		heroSouls = LoadGameInstance->CharacterData.souls;
 	}
 }
 

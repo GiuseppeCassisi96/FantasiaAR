@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "ARSaveGame.h"
 #include "Components/Button.h"
 #include "MainMenu.generated.h"
 
@@ -21,6 +22,8 @@ public:
 	UButton* PlayButton;
 	UPROPERTY(EditDefaultsOnly, meta = (BindWidget))
 	UButton* TutorialButton;
+	UPROPERTY(EditDefaultsOnly, meta = (BindWidget))
+	UButton* LoadButton;
 	UPROPERTY(EditDefaultsOnly, Category="Levels")
 	TSoftObjectPtr<UWorld> Tutorial;
 	UPROPERTY(EditDefaultsOnly, Category = "Levels")
@@ -29,6 +32,8 @@ public:
 	void StartsTutorial();
 	UFUNCTION()
 	void StartsStory();
+	UFUNCTION()
+	void LoadLevel();
 
 	
 };

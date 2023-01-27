@@ -46,6 +46,8 @@ public:
 	bool bIsSpawned;
 	UPROPERTY(EditAnywhere, Category = "DialoguePoints")
 	TArray<TSoftObjectPtr<AActor>> DialoguePoints;
+	UPROPERTY(EditAnywhere, Category = "SavePoint")
+	TSoftObjectPtr<AActor> SavePoint;
 	FUIEvents OnScanIsComplete;
 	FUIEvents OnIsSpawned;
 	FHeroMovements OnForwardMovement;
