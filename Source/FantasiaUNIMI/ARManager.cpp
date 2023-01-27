@@ -105,7 +105,7 @@ void AARManager::InputTouch(ETouchIndex::Type fingerIndex, FVector location)
 		OnRightMovement.AddDynamic(ARHeroObj, &AARHero::RightMovement);
 		OnJump.AddDynamic(ARHeroObj, &AARHero::JumpAction);
 		OnAttack.AddDynamic(ARHeroObj, &AARHero::Attack);
-		
+		UGameplayStatics::PlaySound2D(GetWorld(), WorldSound);
 	}
 
 }
