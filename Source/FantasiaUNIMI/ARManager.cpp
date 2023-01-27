@@ -87,12 +87,10 @@ void AARManager::InputTouch(ETouchIndex::Type fingerIndex, FVector location)
 			ARLevelObj.Get()->SetActorLocation(planeTr.GetLocation() + FVector(0.0f, 0.0f, 50.0f));
 		}
 		ARLevelObj.Get()->SetActorRotation(planeTr.GetRotation());
-		
-		
 		const FVector SpawnLocation = ARLevelObj.Get()->GetActorLocation();
 		GetWorld()->SpawnActor(ARHero, &SpawnLocation);
 		ARHeroObj = static_cast<AARHero*>(UGameplayStatics::GetActorOfClass(this, ARHero));
-
+		ARHeroObj->LoadGame();
 		bIsSpawned = true;
 		for (auto waypoint : wayPoints)
 		{
@@ -107,6 +105,7 @@ void AARManager::InputTouch(ETouchIndex::Type fingerIndex, FVector location)
 		OnRightMovement.AddDynamic(ARHeroObj, &AARHero::RightMovement);
 		OnJump.AddDynamic(ARHeroObj, &AARHero::JumpAction);
 		OnAttack.AddDynamic(ARHeroObj, &AARHero::Attack);
+		
 	}
 
 }

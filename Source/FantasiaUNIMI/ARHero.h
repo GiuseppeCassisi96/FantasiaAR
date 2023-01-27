@@ -6,6 +6,7 @@
 #include "TimerManager.h"
 #include "Components/BoxComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "ARSaveGame.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "GameFramework/Character.h"
@@ -38,14 +39,15 @@ public:
 	int heroLife;
 	UPROPERTY(EditDefaultsOnly, Category = "Life")
 	int heroSouls;
+	int numberOfCoin;
 	UPROPERTY(EditDefaultsOnly, Category = "AnimMontage")
 	UAnimMontage* AttackMontage;
 	FTimerHandle attackTimerHandle;
-	int numberOfCoin;
 	TSoftObjectPtr<UUserWidget> LevelMenu;
 	FHeroProperties LifeUpdate;
 	FHeroProperties CoinUpdate;
 	FHeroProperties SoulsUpdate;
+	
 
 protected:
 	// Called when the game starts or when spawned
@@ -54,6 +56,7 @@ protected:
 	FVector direction;
 	UPROPERTY()
 	TArray<AActor*> Actors;
+
 	UPROPERTY()
 	UAnimInstance* HeroAnimInstance;
 public:	
@@ -77,6 +80,10 @@ public:
 	void Attack();
 
 	void IncrementCoin();
+	UFUNCTION(BlueprintCallable)
+	void SaveGame();
+	UFUNCTION(BlueprintCallable)
+	void LoadGame();
 };
 
 

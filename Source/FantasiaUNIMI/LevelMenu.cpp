@@ -24,6 +24,11 @@ void UScanMenu::StartSession()
 		Cast<AARDialoguePoint>(Manager->DialoguePoints[i].Get())->StartDialogue.AddDynamic(this, &UScanMenu::OnStartDialogue);
 		Cast<AARDialoguePoint>(Manager->DialoguePoints[i].Get())->EndDialogue.AddDynamic(this, &UScanMenu::OnEndDialogue);
 	}
+	if(Manager->SavePoint != nullptr)
+	{
+		Cast<ASavePoint>(Manager->SavePoint.Get())->OnVisibleSaveText.AddDynamic(this, &UScanMenu::VisibleSaveText);
+		Cast<ASavePoint>(Manager->SavePoint.Get())->OnHiddenSaveText.AddDynamic(this, &UScanMenu::HiddenSaveText);
+	}
 	UARBlueprintLibrary::StartARSession(Manager->ARSession);
 	ScanButton->SetVisibility(ESlateVisibility::Hidden);
 	Scanning->SetVisibility(ESlateVisibility::Visible);
@@ -134,6 +139,16 @@ void UScanMenu::UpdateDialogue()
 		}
 	}
 	
+}
+
+void UScanMenu::VisibleSaveText()
+{
+	SaveText->SetVisibility(ESlateVisibility::Visible);
+}
+
+void UScanMenu::HiddenSaveText()
+{
+	SaveText->SetVisibility(ESlateVisibility::Hidden);
 }
 
 
