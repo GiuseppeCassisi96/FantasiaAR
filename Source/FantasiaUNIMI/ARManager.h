@@ -6,6 +6,7 @@
 #include "AugmentedReality/Public/ARBlueprintLibrary.h"
 #include "Kismet/GameplayStatics.h"
 #include "ARHero.h"
+#include "Sound/SoundCue.h"
 #include "ARWaypoint.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/Pawn.h"
@@ -36,6 +37,8 @@ public:
 	
 	UPROPERTY()
 	AARHero* ARHeroObj;
+	UPROPERTY(EditInstanceOnly, Category="Sound")
+	USoundCue* WorldSound;
 	UPROPERTY(EditAnywhere, Category= "RootLevel")
 	TSoftObjectPtr<APawn> ARLevelObj;
 	UPROPERTY(EditAnywhere, Category= "Waypoints")

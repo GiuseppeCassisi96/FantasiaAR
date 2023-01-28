@@ -7,6 +7,7 @@
 #include "Components/BoxComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "ARSaveGame.h"
+#include "Sound/SoundCue.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "GameFramework/Character.h"
@@ -39,9 +40,13 @@ public:
 	int heroLife;
 	UPROPERTY(EditDefaultsOnly, Category = "Life")
 	int heroSouls;
-	int numberOfCoin;
 	UPROPERTY(EditDefaultsOnly, Category = "AnimMontage")
 	UAnimMontage* AttackMontage;
+	UPROPERTY(EditDefaultsOnly, Category = "Sound")
+	USoundCue* HitSound;
+	UPROPERTY(EditDefaultsOnly, Category = "Sound")
+	USoundCue* PowerUpSound;
+	int numberOfCoin;
 	FTimerHandle attackTimerHandle;
 	TSoftObjectPtr<UUserWidget> LevelMenu;
 	FHeroProperties LifeUpdate;

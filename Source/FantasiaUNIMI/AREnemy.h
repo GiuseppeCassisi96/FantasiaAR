@@ -6,6 +6,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "TimerManager.h"
+#include "Sound/SoundCue.h"
 #include "Animation/AnimNode_StateMachine.h"
 #include "MainAnimInstance.h"
 #include "Components/SkeletalMeshComponent.h"
@@ -53,6 +54,8 @@ public:
 	USphereComponent* followSphere;
 	UPROPERTY(EditDefaultsOnly, Category = "IA")
 	USphereComponent* combatSphere;
+	UPROPERTY(EditDefaultsOnly, Category = "Sound")
+	USoundCue* HitSound;
 	
 protected:
 	// Called when the game starts or when spawned
@@ -62,14 +65,11 @@ protected:
 	UPROPERTY()
 	UMainAnimInstance* EnemyAnimInstance;
 	FTimerDelegate AttackTimerDelegate{};
-	FTimerDelegate DeathTimerDelegate{};
 	EFSMState enemyState;
 	FVector DistanceVector;
 	FRotator rotation;
 	FTimerHandle attackTimer;
-	FTimerHandle deathTimer;
 	bool bIsAttacking;
-	//bool bIsDead;
 	
 	
 
@@ -101,8 +101,6 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	void ExecuteFSM();
 	void CheckDistance(APawn* targetPawn);
-	UFUNCTION()
-	void Death();
 
 	
 	

@@ -30,6 +30,5 @@ void UMainMenu::LoadLevel()
 	LoadSaveGameInstance = Cast<UARSaveGame>(UGameplayStatics::LoadGameFromSlot(LoadSaveGameInstance->UserName, LoadSaveGameInstance->UserIndex));
 	if(LoadSaveGameInstance == nullptr)
 		return;
-	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("LOAD"));
 	UGameplayStatics::OpenLevelBySoftObjectPtr(GetWorld(), LoadSaveGameInstance->CharacterData.LevelToLoad);
 }

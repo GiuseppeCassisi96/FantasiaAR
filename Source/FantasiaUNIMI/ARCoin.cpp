@@ -3,6 +3,8 @@
 
 #include "ARCoin.h"
 
+#include "Components/AudioComponent.h"
+
 // Sets default values
 AARCoin::AARCoin()
 {
@@ -38,6 +40,7 @@ void AARCoin::TakeTheCoin(UPrimitiveComponent* OverlappedComponent, AActor* othe
 		AARHero* hero = Cast<AARHero>(otherActor);
 		if(hero)
 		{
+			UGameplayStatics::PlaySound2D(GetWorld(), CoinSound);
 			hero->IncrementCoin();
 			hero->CoinUpdate.Broadcast();
 			Destroy();

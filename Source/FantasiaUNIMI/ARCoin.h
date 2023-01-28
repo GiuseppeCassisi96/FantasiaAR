@@ -6,6 +6,8 @@
 #include "GameFramework/Actor.h"
 #include "ARHero.h"
 #include <Components/SphereComponent.h>
+
+#include "Sound/SoundCue.h"
 #include "ARCoin.generated.h"
 
 UCLASS()
@@ -22,6 +24,8 @@ public:
 	UStaticMeshComponent* CoinMesh;
 	UPROPERTY(EditDefaultsOnly, Category = "RotationSpeed")
 	float rotationSpeed;
+	UPROPERTY(EditDefaultsOnly, Category = "Sound")
+	USoundCue* CoinSound;
 
 protected:
 	// Called when the game starts or when spawned
