@@ -33,7 +33,6 @@ void AAREnemy::BeginPlay()
 	OnTakeAnyDamage.AddDynamic(this, &AAREnemy::TakeDamageFromHero);
 	EnemyAnimInstance = static_cast<UMainAnimInstance*>(GetMesh()->GetAnimInstance());
 	AttackTimerDelegate.BindUFunction(this, "Attack");
-	DeathTimerDelegate.BindUFunction(this, "Death");
 }
 
 // Called every frame
@@ -55,10 +54,6 @@ void AAREnemy::CheckDistance(APawn* targetPawn)
 	DistanceVector = UKismetMathLibrary::Vector_NormalUnsafe( targetPawn->GetActorLocation() - GetActorLocation());
 }
 
-void AAREnemy::Death()
-{
-	Destroy();
-}
 
 void AAREnemy::ExecuteFSM()
 {
@@ -91,9 +86,9 @@ void AAREnemy::ApplyDamageToHero()
 void AAREnemy::TakeDamageFromHero(AActor* Actor, float damage, const UDamageType* type, AController* Contr, AActor* a)
 {
 	SetState(EFSMState::EFSM_Dead);
+	UGameplayStatics::PlaySound2D(GetWorld(), HitSound);
 	EnemyAnimInstance->Montage_Play(CombatMontage);
 	EnemyAnimInstance->Montage_JumpToSection(FName("Death"));
-	GetWorldTimerManager().SetTimer(deathTimer, DeathTimerDelegate, 2.0f, false);
 }
 
 void AAREnemy::Attack()

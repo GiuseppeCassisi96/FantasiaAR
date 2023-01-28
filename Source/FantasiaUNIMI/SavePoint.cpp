@@ -40,7 +40,7 @@ void ASavePoint::SaveBegin(UPrimitiveComponent* OverlappedComponent, AActor* oth
 		AARHero* hero = Cast<AARHero>(otherActor);
 		if(hero)
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("TRIGGER"));
+			UGameplayStatics::PlaySound2D(GetWorld(), SaveSound);
 			hero->SaveGame();
 			OnVisibleSaveText.Broadcast();
 		}

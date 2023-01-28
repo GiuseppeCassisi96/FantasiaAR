@@ -72,6 +72,7 @@ void AARHero::ApplyDamageToEnemy()
 void AARHero::TakeDamageFromEnemy(AActor* Actor, float damage, const UDamageType* type, AController* Contr, AActor* a)
 {
 	heroLife -= damage;
+	UGameplayStatics::PlaySound2D(GetWorld(), HitSound);
 	if (heroLife <= 0)
 	{
 		heroSouls--;
@@ -106,6 +107,7 @@ void AARHero::IncrementCoin()
 		numberOfCoin = 0;
 		if(heroLife <= 90)
 		{
+			UGameplayStatics::PlaySound2D(GetWorld(), PowerUpSound);
 			heroLife += 10;
 			LifeUpdate.Broadcast();
 		}
@@ -123,7 +125,6 @@ void AARHero::SaveGame()
 	SaveGameInstance->CharacterData.LevelToLoad = GetWorld();
 	UGameplayStatics::SaveGameToSlot(SaveGameInstance, SaveGameInstance->UserName, 
 		SaveGameInstance->UserIndex);
-	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("SAVE"));
 }
 
 void AARHero::LoadGame()

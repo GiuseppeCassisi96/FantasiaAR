@@ -22,6 +22,8 @@ public:
 	USphereComponent* SaveTrigger;
 	UPROPERTY(EditDefaultsOnly, Category = "Mesh")
 	UStaticMeshComponent* MeshComponent;
+	UPROPERTY(EditDefaultsOnly, Category = "Sound")
+	USoundCue* SaveSound;
 	FSaveUIEvents OnVisibleSaveText;
 	FSaveUIEvents OnHiddenSaveText;
 
