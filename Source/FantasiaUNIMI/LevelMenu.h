@@ -41,6 +41,8 @@ public:
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UTextBlock* LifeText;
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UTextBlock* TouchText;
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UTextBlock* DialogueText;
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UTextBlock* CoinText;

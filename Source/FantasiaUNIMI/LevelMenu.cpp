@@ -37,10 +37,12 @@ void UScanMenu::StartSession()
 void UScanMenu::ScanIsCompleteEvent()
 {
 	Scanning->SetVisibility(ESlateVisibility::Hidden);
+	TouchText->SetVisibility(ESlateVisibility::Visible);
 }
 
 void UScanMenu::IsSpawnedEvent()
 {
+	TouchText->SetVisibility(ESlateVisibility::Hidden);
 	Coin->SetVisibility(ESlateVisibility::Visible);
 	Souls->SetVisibility(ESlateVisibility::Visible);
 	Heart->SetVisibility(ESlateVisibility::Visible);

@@ -46,11 +46,6 @@ void AARManager::Tick(float DeltaTime)
 			OnScanIsComplete.Broadcast();
 		}
 	}
-	else
-	{
-		UARBlueprintLibrary::DebugDrawTrackedGeometry(ARCorePlane, this,
-			FColor::Red);
-	}
 }
 
 // Called to bind functionality to input
@@ -113,12 +108,14 @@ void AARManager::InputTouch(ETouchIndex::Type fingerIndex, FVector location)
 //Manage Hero movements
 void AARManager::ForwardMovement(float inputValue)
 {
-	OnForwardMovement.Broadcast(inputValue, GetTransform().GetUnitAxis(EAxis::Type::X));
+	SetActorRotation(FRotator(0.0f, GetActorRotation().Yaw, GetActorRotation().Roll));
+	OnForwardMovement.Broadcast(inputValue, GetActorForwardVector());
+	
 }
 
 void AARManager::RightMovement(float inputValue)
 {
-	OnRightMovement.Broadcast(inputValue, GetTransform().GetUnitAxis(EAxis::Type::Y));
+	OnRightMovement.Broadcast(inputValue, GetActorRightVector());
 }
 
 void AARManager::JumpAction()
