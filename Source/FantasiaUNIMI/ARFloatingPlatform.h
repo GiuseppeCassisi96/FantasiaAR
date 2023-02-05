@@ -20,6 +20,8 @@ public:
 	float speed = 7;
 	UPROPERTY(EditInstanceOnly, Category = "Amplitude");
 	float amplitude;
+	UPROPERTY(EditInstanceOnly, Category = "Direction")
+	FVector MoveDir {1.0f, 0.0f, 0.0f};
 	float iteration = 0.0f;
 
 
