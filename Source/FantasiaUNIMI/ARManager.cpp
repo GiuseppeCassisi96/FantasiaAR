@@ -46,11 +46,6 @@ void AARManager::Tick(float DeltaTime)
 			OnScanIsComplete.Broadcast();
 		}
 	}
-	else
-	{
-		UARBlueprintLibrary::DebugDrawTrackedGeometry(ARCorePlane, this,
-			FColor::Red);
-	}
 }
 
 // Called to bind functionality to input
@@ -77,13 +72,20 @@ void AARManager::InputTouch(ETouchIndex::Type fingerIndex, FVector location)
 		{
 			child->SetActorHiddenInGame(false);
 		}
-
-		ARLevelObj.Get()->SetActorLocation(planeTr.GetLocation());
+		FVector distance = GetActorLocation() - planeTr.GetLocation();
+		if(distance.Z < 40.0f)
+		{
+			ARLevelObj.Get()->SetActorLocation(planeTr.GetLocation());
+		}
+		else
+		{
+			ARLevelObj.Get()->SetActorLocation(planeTr.GetLocation() + FVector(0.0f, 0.0f, 50.0f));
+		}
 		ARLevelObj.Get()->SetActorRotation(planeTr.GetRotation());
 		const FVector SpawnLocation = ARLevelObj.Get()->GetActorLocation();
 		GetWorld()->SpawnActor(ARHero, &SpawnLocation);
 		ARHeroObj = static_cast<AARHero*>(UGameplayStatics::GetActorOfClass(this, ARHero));
-
+		ARHeroObj->LoadGame();
 		bIsSpawned = true;
 		for (auto waypoint : wayPoints)
 		{
@@ -93,10 +95,12 @@ void AARManager::InputTouch(ETouchIndex::Type fingerIndex, FVector location)
 		OnIsSpawned.Broadcast();
 		ARHeroObj->CoinUpdate.Broadcast();
 		ARHeroObj->LifeUpdate.Broadcast();
+		ARHeroObj->SoulsUpdate.Broadcast();
 		OnForwardMovement.AddDynamic(ARHeroObj, &AARHero::ForwardMovement);
 		OnRightMovement.AddDynamic(ARHeroObj, &AARHero::RightMovement);
 		OnJump.AddDynamic(ARHeroObj, &AARHero::JumpAction);
-		OnAttack.AddDynamic(ARHeroObj, &AARHero::ApplyDamageToEnemy);
+		OnAttack.AddDynamic(ARHeroObj, &AARHero::Attack);
+		UGameplayStatics::PlaySound2D(GetWorld(), WorldSound);
 	}
 
 }
@@ -104,18 +108,21 @@ void AARManager::InputTouch(ETouchIndex::Type fingerIndex, FVector location)
 //Manage Hero movements
 void AARManager::ForwardMovement(float inputValue)
 {
-	OnForwardMovement.Broadcast(inputValue, GetTransform().GetUnitAxis(EAxis::Type::X));
+	SetActorRotation(FRotator(0.0f, GetActorRotation().Yaw, GetActorRotation().Roll));
+	OnForwardMovement.Broadcast(inputValue, GetActorForwardVector());
+	
 }
 
 void AARManager::RightMovement(float inputValue)
 {
-	OnForwardMovement.Broadcast(inputValue, GetTransform().GetUnitAxis(EAxis::Type::Y));
+	OnRightMovement.Broadcast(inputValue, GetActorRightVector());
 }
 
 void AARManager::JumpAction()
 {
 	OnJump.Broadcast();
 }
+
 
 void AARManager::AttackAction()
 {

@@ -6,6 +6,7 @@
 #include "AugmentedReality/Public/ARBlueprintLibrary.h"
 #include "Kismet/GameplayStatics.h"
 #include "ARHero.h"
+#include "Sound/SoundCue.h"
 #include "ARWaypoint.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/Pawn.h"
@@ -36,6 +37,8 @@ public:
 	
 	UPROPERTY()
 	AARHero* ARHeroObj;
+	UPROPERTY(EditInstanceOnly, Category="Sound")
+	USoundCue* WorldSound;
 	UPROPERTY(EditAnywhere, Category= "RootLevel")
 	TSoftObjectPtr<APawn> ARLevelObj;
 	UPROPERTY(EditAnywhere, Category= "Waypoints")
@@ -46,6 +49,8 @@ public:
 	bool bIsSpawned;
 	UPROPERTY(EditAnywhere, Category = "DialoguePoints")
 	TArray<TSoftObjectPtr<AActor>> DialoguePoints;
+	UPROPERTY(EditAnywhere, Category = "SavePoint")
+	TSoftObjectPtr<AActor> SavePoint;
 	FUIEvents OnScanIsComplete;
 	FUIEvents OnIsSpawned;
 	FHeroMovements OnForwardMovement;
@@ -64,7 +69,6 @@ protected:
 	FVector2D ScreenSize;
 	UPROPERTY()
 	TArray<UARTrackedGeometry*> Results;
-	FTimerHandle attackTimerHandle;
 	UPROPERTY()
 	APlayerController* PlayerController;
 public:	
@@ -76,6 +80,8 @@ public:
 	void InputTouch(ETouchIndex::Type fingerIndex, FVector location);
 	void ForwardMovement(float inputValue);
 	void RightMovement(float inputValue);
+	UFUNCTION()
 	void JumpAction();
+	UFUNCTION()
 	void AttackAction();
 };

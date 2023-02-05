@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "ARManager.h"
+#include "SavePoint.h"
 #include "ARDialoguePoint.h"
 #include "Components/Button.h"
 #include "Components/CircularThrobber.h"
@@ -26,6 +27,10 @@ public:
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UButton* ScanButton;
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UButton* AButton;
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UButton* BButton;
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UButton* PauseButton;
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UButton* DialogueButton;
@@ -36,15 +41,23 @@ public:
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UTextBlock* LifeText;
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UTextBlock* TouchText;
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UTextBlock* DialogueText;
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UTextBlock* CoinText;
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UTextBlock* SaveText;
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UCircularThrobber* Scanning;
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UImage* Coin;
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UImage* Heart;
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UImage* Souls;
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UTextBlock* SoulText;
 	UPROPERTY(EditDefaultsOnly, Category = "Level")
 	TSoftObjectPtr<UWorld> MenuLevel;
 	UPROPERTY()
@@ -66,6 +79,8 @@ public:
 	UFUNCTION()
 	void UpdateHeroCoinUI();
 	UFUNCTION()
+	void UpdateHeroSoulsUI();
+	UFUNCTION()
 	void PauseFunction();
 
 	UFUNCTION()
@@ -77,5 +92,9 @@ public:
 	void OnEndDialogue(AActor* DialoguePoint);
 	UFUNCTION()
 	void UpdateDialogue();
+	UFUNCTION()
+	void VisibleSaveText();
+	UFUNCTION()
+	void HiddenSaveText();
 	
 };

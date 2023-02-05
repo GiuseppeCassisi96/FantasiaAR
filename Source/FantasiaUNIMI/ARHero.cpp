@@ -3,6 +3,10 @@
 
 #include "ARHero.h"
 
+#include "ARBlueprintLibrary.h"
+#include "Animation/AnimInstance.h"
+#include "Components/CapsuleComponent.h"
+#include "Components/SkeletalMeshComponent.h"
 
 
 // Sets default values
@@ -19,8 +23,8 @@ void AARHero::BeginPlay()
 	rotation = FRotator::ZeroRotator;
 	direction = FVector::Zero();
 	OnTakeAnyDamage.AddUniqueDynamic(this, &AARHero::TakeDamageFromEnemy);
-	TimerFunctionDelegate.BindUFunction(this, "SetbCanAttack");
 	Actors.Add(this);
+	HeroAnimInstance = GetMesh()->GetAnimInstance();
 }
 
 // Called every frame
@@ -28,6 +32,7 @@ void AARHero::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	SetActorRotation(FRotator(0.0f, rotation.Yaw, 0.0f));
+	
 }
 
 // Called to bind functionality to input
@@ -57,27 +62,84 @@ void AARHero::JumpAction()
 	Jump();
 }
 
+
 void AARHero::ApplyDamageToEnemy()
 {
-	if(bCanAttack)
-	{
-		bCanAttack = false;
-		GetWorldTimerManager().SetTimer(attackTimerHandle, TimerFunctionDelegate, attackTime, false);
-		UGameplayStatics::ApplyRadialDamage(this, 10.0f, GetActorLocation(),
-			attackRadius, damageType, Actors);
-		
-	}
+	UGameplayStatics::ApplyRadialDamage(this, 10.0f, GetActorLocation(),
+		attackRadius, damageType, Actors);
 }
 
 void AARHero::TakeDamageFromEnemy(AActor* Actor, float damage, const UDamageType* type, AController* Contr, AActor* a)
 {
+	GetMesh()->AddForce(GetActorLocation() - Actor->GetActorLocation() * 2000000.0f);
 	heroLife -= damage;
+	UGameplayStatics::PlaySound2D(GetWorld(), HitSound);
+	if (heroLife <= 0)
+	{
+		heroSouls--;
+		heroLife = 100;
+		if(heroSouls <= 0)
+		{
+			UARBlueprintLibrary::StopARSession();
+			UGameplayStatics::OpenLevel(GetWorld(), FName("MainMenu"));
+			return;
+		}
+		SoulsUpdate.Broadcast();
+	}
 	LifeUpdate.Broadcast();
 }
 
-void AARHero::SetbCanAttack()
+void AARHero::Attack()
 {
-	bCanAttack = true;
+	if(!bAttackState)
+	{
+		bAttackState = true;
+		HeroAnimInstance->Montage_Play(AttackMontage);
+		HeroAnimInstance->Montage_JumpToSection(FName("Attack"));
+	}
+}
+
+
+void AARHero::IncrementCoin()
+{
+	numberOfCoin++;
+	if(numberOfCoin >= 10)
+	{
+		numberOfCoin = 0;
+		if(heroLife <= 90)
+		{
+			UGameplayStatics::PlaySound2D(GetWorld(), PowerUpSound);
+			heroLife += 10;
+			LifeUpdate.Broadcast();
+		}
+		
+	}
+}
+
+void AARHero::SaveGame()
+{
+	UARSaveGame* SaveGameInstance = Cast<UARSaveGame>(UGameplayStatics::CreateSaveGameObject(
+		UARSaveGame::StaticClass()));
+	SaveGameInstance->CharacterData.life = heroLife;
+	SaveGameInstance->CharacterData.coin = numberOfCoin;
+	SaveGameInstance->CharacterData.souls = heroSouls;
+	SaveGameInstance->CharacterData.LevelToLoad = GetWorld();
+	UGameplayStatics::SaveGameToSlot(SaveGameInstance, SaveGameInstance->UserName, 
+		SaveGameInstance->UserIndex);
+}
+
+void AARHero::LoadGame()
+{
+	UARSaveGame* LoadGameInstance = Cast<UARSaveGame>(UGameplayStatics::CreateSaveGameObject(
+		UARSaveGame::StaticClass()));
+	LoadGameInstance = Cast<UARSaveGame>(UGameplayStatics::LoadGameFromSlot(LoadGameInstance->UserName, 
+		LoadGameInstance->UserIndex));
+	if (LoadGameInstance != nullptr && GetWorld() == LoadGameInstance->CharacterData.LevelToLoad)
+	{
+		heroLife = LoadGameInstance->CharacterData.life;
+		numberOfCoin = LoadGameInstance->CharacterData.coin;
+		heroSouls = LoadGameInstance->CharacterData.souls;
+	}
 }
 
 

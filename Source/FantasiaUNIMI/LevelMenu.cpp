@@ -24,6 +24,11 @@ void UScanMenu::StartSession()
 		Cast<AARDialoguePoint>(Manager->DialoguePoints[i].Get())->StartDialogue.AddDynamic(this, &UScanMenu::OnStartDialogue);
 		Cast<AARDialoguePoint>(Manager->DialoguePoints[i].Get())->EndDialogue.AddDynamic(this, &UScanMenu::OnEndDialogue);
 	}
+	if(Manager->SavePoint != nullptr)
+	{
+		Cast<ASavePoint>(Manager->SavePoint.Get())->OnVisibleSaveText.AddDynamic(this, &UScanMenu::VisibleSaveText);
+		Cast<ASavePoint>(Manager->SavePoint.Get())->OnHiddenSaveText.AddDynamic(this, &UScanMenu::HiddenSaveText);
+	}
 	UARBlueprintLibrary::StartARSession(Manager->ARSession);
 	ScanButton->SetVisibility(ESlateVisibility::Hidden);
 	Scanning->SetVisibility(ESlateVisibility::Visible);
@@ -32,17 +37,27 @@ void UScanMenu::StartSession()
 void UScanMenu::ScanIsCompleteEvent()
 {
 	Scanning->SetVisibility(ESlateVisibility::Hidden);
+	TouchText->SetVisibility(ESlateVisibility::Visible);
 }
 
 void UScanMenu::IsSpawnedEvent()
 {
+	TouchText->SetVisibility(ESlateVisibility::Hidden);
 	Coin->SetVisibility(ESlateVisibility::Visible);
+	Souls->SetVisibility(ESlateVisibility::Visible);
 	Heart->SetVisibility(ESlateVisibility::Visible);
 	LifeText->SetVisibility(ESlateVisibility::Visible);
 	CoinText->SetVisibility(ESlateVisibility::Visible);
+	SoulText->SetVisibility(ESlateVisibility::Visible);
 	PauseButton->SetVisibility(ESlateVisibility::Visible);
+	AButton->SetVisibility(ESlateVisibility::Visible);
+	BButton->SetVisibility(ESlateVisibility::Visible);
+	AButton->OnPressed.AddDynamic(Manager, &AARManager::JumpAction);
+	BButton->OnPressed.AddDynamic(Manager, &AARManager::AttackAction);
 	Manager->ARHeroObj->LifeUpdate.AddDynamic(this, &UScanMenu::UpdateHeroLifeUI);
 	Manager->ARHeroObj->CoinUpdate.AddDynamic(this, &UScanMenu::UpdateHeroCoinUI);
+	Manager->ARHeroObj->SoulsUpdate.AddDynamic(this, &UScanMenu::UpdateHeroSoulsUI);
+	
 }
 
 void UScanMenu::UpdateHeroLifeUI()
@@ -55,6 +70,12 @@ void UScanMenu::UpdateHeroCoinUI()
 {
 	float NCoin = Manager->ARHeroObj->numberOfCoin;
 	CoinText->SetText(FText::FromString(FString::FromInt(NCoin)));
+}
+
+void UScanMenu::UpdateHeroSoulsUI()
+{
+	float HSouls = Manager->ARHeroObj->heroSouls;
+	SoulText->SetText(FText::FromString(FString::FromInt(HSouls)));
 }
 
 void UScanMenu::PauseFunction()
@@ -120,6 +141,16 @@ void UScanMenu::UpdateDialogue()
 		}
 	}
 	
+}
+
+void UScanMenu::VisibleSaveText()
+{
+	SaveText->SetVisibility(ESlateVisibility::Visible);
+}
+
+void UScanMenu::HiddenSaveText()
+{
+	SaveText->SetVisibility(ESlateVisibility::Hidden);
 }
 
 
