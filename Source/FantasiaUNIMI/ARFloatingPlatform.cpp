@@ -13,6 +13,7 @@ AARFloatingPlatform::AARFloatingPlatform()
 	PrimaryActorTick.bCanEverTick = true;
 	Platform = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("PlatformMesh"));
 	RootComponent = Platform;
+	
 }
 
 // Called when the game starts or when spawned

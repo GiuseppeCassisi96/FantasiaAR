@@ -25,6 +25,7 @@ void AARHero::BeginPlay()
 	OnTakeAnyDamage.AddUniqueDynamic(this, &AARHero::TakeDamageFromEnemy);
 	Actors.Add(this);
 	HeroAnimInstance = GetMesh()->GetAnimInstance();
+	
 }
 
 // Called every frame
