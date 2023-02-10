@@ -6,6 +6,7 @@
 #include "Components/SphereComponent.h"
 #include "ARHero.h"
 #include "GameFramework/Actor.h"
+#include "NiagaraComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "ARChangeLevel.generated.h"
 
@@ -23,7 +24,8 @@ public:
 	UStaticMeshComponent* MeshComponent;
 	UPROPERTY(EditInstanceOnly, Category = "Level")
 	TSoftObjectPtr<UWorld> NextLevel;
-
+	UPROPERTY(EditInstanceOnly, Category = "VFX")
+	UNiagaraComponent* RingVFX;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

@@ -68,10 +68,6 @@ void AARManager::InputTouch(ETouchIndex::Type fingerIndex, FVector location)
 	{
 		TArray<AActor*> Actors;
 		ARLevelObj.Get()->GetAttachedActors(Actors, true, true);
-		for (auto const child : Actors)
-		{
-			child->SetActorHiddenInGame(false);
-		}
 		FVector distance = GetActorLocation() - planeTr.GetLocation();
 		if(distance.Z < 40.0f)
 		{
@@ -80,6 +76,10 @@ void AARManager::InputTouch(ETouchIndex::Type fingerIndex, FVector location)
 		else
 		{
 			ARLevelObj.Get()->SetActorLocation(planeTr.GetLocation() + FVector(0.0f, 0.0f, 50.0f));
+		}
+		for (auto const child : Actors)
+		{
+			child->SetActorHiddenInGame(false);
 		}
 		ARLevelObj.Get()->SetActorRotation(planeTr.GetRotation());
 		const FVector SpawnLocation = ARLevelObj.Get()->GetActorLocation();

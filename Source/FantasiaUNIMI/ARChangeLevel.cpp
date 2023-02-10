@@ -15,6 +15,8 @@ AARChangeLevel::AARChangeLevel()
 	RootComponent = ChangeLevelTrigger;
 	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ChangeLevelMesh"));
 	MeshComponent->SetupAttachment(ChangeLevelTrigger);
+	RingVFX = CreateDefaultSubobject<UNiagaraComponent>(TEXT("RingVFX"));
+	RingVFX->SetupAttachment(ChangeLevelTrigger);
 }
 
 // Called when the game starts or when spawned
