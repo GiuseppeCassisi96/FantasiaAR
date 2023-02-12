@@ -4,6 +4,7 @@
 #include "ARDialoguePoint.h"
 
 #include "Blueprint/WidgetBlueprintLibrary.h"
+#include "Kismet/KismetMathLibrary.h"
 
 // Sets default values
 AARDialoguePoint::AARDialoguePoint()
@@ -12,8 +13,8 @@ AARDialoguePoint::AARDialoguePoint()
 	PrimaryActorTick.bCanEverTick = true;
 	DialogueSphere = CreateDefaultSubobject<USphereComponent>(TEXT("DialogueTrigger"));
 	RootComponent = DialogueSphere;
-	DialogueMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshOfDialoguePoint"));
-	DialogueMesh->SetupAttachment(RootComponent);
+	NPCBody = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("NPCSKMesh"));
+	NPCBody->SetupAttachment(RootComponent);
 }
 
 // Called when the game starts or when spawned
@@ -35,11 +36,13 @@ void AARDialoguePoint::DialogueBegin(UPrimitiveComponent* OverlappedComponent, A
 	UPrimitiveComponent* otherComponent, int otherBodyIndex, bool fromSweep, const FHitResult& sweepResults)
 {
 	StartDialogue.Broadcast(dialogues, this);
+	bDialogueIsStart = true;
 }
 
 void AARDialoguePoint::DialogueEnd(UPrimitiveComponent* OverlappedComponent, AActor* otherActor,
 	UPrimitiveComponent* otherComponent, int otherBodyIndex)
 {
 	EndDialogue.Broadcast(this);
+	bDialogueIsStart = false;
 }
 

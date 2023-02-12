@@ -46,16 +46,18 @@ void AARHero::ForwardMovement(float inputValue, FVector ARCameraFowardAxe)
 {
 	AddMovementInput(ARCameraFowardAxe, inputValue
 		* Speed * GetWorld()->GetDeltaSeconds());
-	rotation = UKismetMathLibrary::FindLookAtRotation(FVector::ForwardVector,
-		GetMovementComponent()->Velocity);
+	if(GetMovementComponent()->Velocity != FVector::Zero())
+		rotation = UKismetMathLibrary::FindLookAtRotation(FVector::ForwardVector,
+			GetMovementComponent()->Velocity);
 }
 
 void AARHero::RightMovement(float inputValue, FVector ARCameraRightAxe)
 {
 	AddMovementInput(ARCameraRightAxe, inputValue
 		* Speed * GetWorld()->GetDeltaSeconds());
-	rotation = UKismetMathLibrary::FindLookAtRotation(FVector::ForwardVector,
-		GetMovementComponent()->Velocity);
+	if (GetMovementComponent()->Velocity != FVector::Zero())
+		rotation = UKismetMathLibrary::FindLookAtRotation(FVector::ForwardVector,
+			GetMovementComponent()->Velocity);
 }
 
 void AARHero::JumpAction()
