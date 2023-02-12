@@ -75,6 +75,7 @@ void AAREnemy::ApplyDamageToHero()
 {
 	if(enemyState == EFSMState::EFSM_Attack && enemyState != EFSMState::EFSM_Dead)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("ATTACK"));
 		UGameplayStatics::ApplyDamage(ARHeroObj, attackDamage,
 			GetController(), this, damageType);
 		float attackTime = FMath::RandRange(minAttackTime, maxAttackTime);

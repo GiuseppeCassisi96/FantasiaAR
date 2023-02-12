@@ -74,7 +74,6 @@ void AARHero::ApplyDamageToEnemy()
 
 void AARHero::TakeDamageFromEnemy(AActor* Actor, float damage, const UDamageType* type, AController* Contr, AActor* a)
 {
-	GetMesh()->AddForce(GetActorLocation() - Actor->GetActorLocation() * 2000000.0f);
 	heroLife -= damage;
 	UGameplayStatics::PlaySound2D(GetWorld(), HitSound);
 	if (heroLife <= 0)
