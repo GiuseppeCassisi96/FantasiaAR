@@ -35,14 +35,29 @@ void AARDialoguePoint::Tick(float DeltaTime)
 void AARDialoguePoint::DialogueBegin(UPrimitiveComponent* OverlappedComponent, AActor* otherActor,
 	UPrimitiveComponent* otherComponent, int otherBodyIndex, bool fromSweep, const FHitResult& sweepResults)
 {
-	StartDialogue.Broadcast(dialogues, this);
-	bDialogueIsStart = true;
+	if(otherActor)
+	{
+		AARHero* hero = Cast<AARHero>(otherActor);
+		if(hero)
+		{
+			StartDialogue.Broadcast(dialogues, this);
+			bDialogueIsStart = true;
+		}
+	}
 }
 
 void AARDialoguePoint::DialogueEnd(UPrimitiveComponent* OverlappedComponent, AActor* otherActor,
 	UPrimitiveComponent* otherComponent, int otherBodyIndex)
 {
-	EndDialogue.Broadcast(this);
-	bDialogueIsStart = false;
+	if (otherActor)
+	{
+		AARHero* hero = Cast<AARHero>(otherActor);
+		if (hero)
+		{
+			EndDialogue.Broadcast(this);
+			bDialogueIsStart = false;
+		}
+	}
 }
+
 

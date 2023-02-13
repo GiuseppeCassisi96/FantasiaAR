@@ -86,10 +86,13 @@ void AAREnemy::ApplyDamageToHero()
 
 void AAREnemy::TakeDamageFromHero(AActor* Actor, float damage, const UDamageType* type, AController* Contr, AActor* a)
 {
-	SetState(EFSMState::EFSM_Dead);
-	UGameplayStatics::PlaySound2D(GetWorld(), HitSound);
-	EnemyAnimInstance->Montage_Play(CombatMontage);
-	EnemyAnimInstance->Montage_JumpToSection(FName("Death"));
+	if(enemyState != EFSMState::EFSM_Dead)
+	{
+		SetState(EFSMState::EFSM_Dead);
+		UGameplayStatics::PlaySound2D(GetWorld(), HitSound);
+		EnemyAnimInstance->Montage_Play(CombatMontage);
+		EnemyAnimInstance->Montage_JumpToSection(FName("Death"));
+	}
 }
 
 void AAREnemy::Attack()
