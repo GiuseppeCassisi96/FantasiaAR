@@ -36,7 +36,6 @@ void AARDeathCollider::Death(UPrimitiveComponent* OverlappedComponent, AActor* o
 		AARHero* hero = Cast<AARHero>(otherActor);
 		if(hero)
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("HERO"));
 			hero->heroSouls--;
 			if(hero->heroSouls <= 0)
 			{
