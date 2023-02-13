@@ -127,6 +127,7 @@ void UScanMenu::OnEndDialogue(AActor* DialoguePoint)
 	DialogueText->SetVisibility(ESlateVisibility::Hidden);
 	DialogueButton->SetVisibility(ESlateVisibility::Hidden);
 	currentDialoguePoint->dialogueIndex = 0;
+	currentDialoguePoint->bDialogueIsComplete = false;
 }
 
 void UScanMenu::UpdateDialogue()

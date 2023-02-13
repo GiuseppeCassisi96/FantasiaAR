@@ -3,14 +3,16 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
+#include "GameFramework/Pawn.h"
+#include "ARHero.h"
 #include "Components/SphereComponent.h"
 #include "Components/StaticMeshComponent.h"
+#include "Components/SkeletalMeshComponent.h"
 #include "ARDialoguePoint.generated.h"
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FStartDialogueEvent, TArray<FString>, dialogues, AActor*, dialoguePoint);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FEndDialogueEvent, AActor*, dialoguePoint);
 UCLASS()
-class FANTASIAUNIMI_API AARDialoguePoint : public AActor
+class FANTASIAUNIMI_API AARDialoguePoint : public APawn
 {
 	GENERATED_BODY()
 	
@@ -19,11 +21,13 @@ public:
 	AARDialoguePoint();
 	UPROPERTY(EditAnywhere, Category="Trigger")
 	USphereComponent* DialogueSphere;
-	UPROPERTY(EditDefaultsOnly, Category = "Trigger")
-	UStaticMeshComponent* DialogueMesh;
 	
 	UPROPERTY(EditInstanceOnly, Category="Dialogues")
 	TArray<FString> dialogues;
+	UPROPERTY(EditInstanceOnly, Category = "SkeletalMesh")
+	USkeletalMeshComponent* NPCBody;
+	UPROPERTY(BlueprintReadOnly, Category="Dialogues")
+	bool bDialogueIsStart;
 	FStartDialogueEvent StartDialogue;
 	FEndDialogueEvent EndDialogue;
 	int dialogueIndex;

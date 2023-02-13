@@ -34,7 +34,6 @@ void ASavePoint::Tick(float DeltaTime)
 void ASavePoint::SaveBegin(UPrimitiveComponent* OverlappedComponent, AActor* otherActor,
 	UPrimitiveComponent* otherComponent, int otherBodyIndex, bool fromSweep, const FHitResult& sweepResults)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("INIT"));
 	if(otherActor)
 	{
 		AARHero* hero = Cast<AARHero>(otherActor);

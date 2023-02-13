@@ -32,10 +32,6 @@ public:
 	
 	// Sets default values for this character's properties
 	AAREnemy();
-	UPROPERTY(EditDefaultsOnly, Category = "Distances")
-	double FollowDistance = 4.0f;
-	UPROPERTY(EditDefaultsOnly, Category = "Distances")
-	double AttackDistance = 1.0f;
 	UPROPERTY(EditDefaultsOnly, Category = "Hero")
 	TSubclassOf<ACharacter> ARHeroClass;
 	UPROPERTY(EditDefaultsOnly, Category = "Movement")
