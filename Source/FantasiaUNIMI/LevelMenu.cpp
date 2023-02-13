@@ -10,8 +10,14 @@ void UScanMenu::NativeConstruct()
 	Super::NativeConstruct();
 	ScanButton->OnClicked.AddUniqueDynamic(this, &UScanMenu::StartSession);
 	PauseButton->OnClicked.AddUniqueDynamic(this, &UScanMenu::PauseFunction);
-	MenuButton->OnClicked.AddUniqueDynamic(this, &UScanMenu::UScanMenu::GoToTheMenu);
+	MenuButton->OnClicked.AddUniqueDynamic(this, &UScanMenu::GoToTheMenu);
 	DialogueButton->OnClicked.AddUniqueDynamic(this, &UScanMenu::UpdateDialogue);
+	DeathCollider = Cast<AARDeathCollider>(UGameplayStatics::GetActorOfClass(GetWorld(), 
+		DeathColliderClass));
+	ChangeLevel = Cast<AARChangeLevel>(UGameplayStatics::GetActorOfClass(GetWorld(),
+		ChangeLevelClass));
+	ExitButton->OnClicked.AddDynamic(this, &UScanMenu::GoToTheMenu);
+	ChangeLevelButton->OnClicked.AddDynamic(this, &UScanMenu::GoToTheNextLevel);
 }
 
 void UScanMenu::StartSession()
@@ -38,6 +44,10 @@ void UScanMenu::ScanIsCompleteEvent()
 {
 	Scanning->SetVisibility(ESlateVisibility::Hidden);
 	TouchText->SetVisibility(ESlateVisibility::Visible);
+	DeathCollider->LoseOneSoulEvent.AddDynamic(this, &UScanMenu::LoseOneSoulEvent);
+	deathTimerDelegate.BindUFunction(this, "HideDeathText");
+	DeathCollider->GameOverEvent.AddDynamic(this, &UScanMenu::GameOverEvent);
+	ChangeLevel->ChangeLevelEvent.AddDynamic(this, &UScanMenu::ChangeLevelEvent);
 }
 
 void UScanMenu::IsSpawnedEvent()
@@ -152,6 +162,37 @@ void UScanMenu::VisibleSaveText()
 void UScanMenu::HiddenSaveText()
 {
 	SaveText->SetVisibility(ESlateVisibility::Hidden);
+}
+
+void UScanMenu::LoseOneSoulEvent()
+{
+	DeathText->SetVisibility(ESlateVisibility::Visible);
+	GetWorld()->GetTimerManager().SetTimer(deathTimer, deathTimerDelegate, 5.0f, false);
+}
+
+void UScanMenu::HideDeathText()
+{
+	DeathText->SetVisibility(ESlateVisibility::Hidden);
+}
+
+void UScanMenu::GameOverEvent()
+{
+	DeathBorder->SetVisibility(ESlateVisibility::Visible);
+	GameOverText->SetVisibility(ESlateVisibility::Visible);
+	ExitButton->SetVisibility(ESlateVisibility::Visible);
+	DeathText->SetVisibility(ESlateVisibility::Hidden);
+}
+
+void UScanMenu::ChangeLevelEvent()
+{
+	ChangeLevelBorder->SetVisibility(ESlateVisibility::Visible);
+	ChangeLevelButton->SetVisibility(ESlateVisibility::Visible);
+	ChangeLevelText->SetVisibility(ESlateVisibility::Visible);
+}
+
+void UScanMenu::GoToTheNextLevel()
+{
+	UGameplayStatics::OpenLevelBySoftObjectPtr(GetWorld(), ChangeLevel->NextLevel);
 }
 
 

@@ -36,11 +36,14 @@ void AARDeathCollider::Death(UPrimitiveComponent* OverlappedComponent, AActor* o
 		AARHero* hero = Cast<AARHero>(otherActor);
 		if(hero)
 		{
+			LoseOneSoulEvent.Broadcast();
 			hero->heroSouls--;
 			if(hero->heroSouls <= 0)
 			{
-				UARBlueprintLibrary::StopARSession();
-				UGameplayStatics::OpenLevel(GetWorld(), FName("MainMenu"));
+				/*UARBlueprintLibrary::StopARSession();
+				UGameplayStatics::OpenLevel(GetWorld(), FName("MainMenu"));*/
+				hero->SoulsUpdate.Broadcast();
+				GameOverEvent.Broadcast();
 				return;
 			}
 			hero->SoulsUpdate.Broadcast();

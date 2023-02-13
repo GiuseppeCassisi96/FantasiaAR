@@ -41,8 +41,9 @@ void AARChangeLevel::BeginTrigger(UPrimitiveComponent* OverlappedComponent, AAct
 		AARHero* hero = Cast<AARHero>(otherActor);
 		if(hero)
 		{
-			UARBlueprintLibrary::StopARSession();
-			UGameplayStatics::OpenLevelBySoftObjectPtr(GetWorld(), NextLevel);
+			/*UARBlueprintLibrary::StopARSession();
+			UGameplayStatics::OpenLevelBySoftObjectPtr(GetWorld(), NextLevel);*/
+			ChangeLevelEvent.Broadcast();
 		}
 	}
 	

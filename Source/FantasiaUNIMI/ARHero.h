@@ -46,7 +46,6 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Sound")
 	USoundCue* PowerUpSound;
 	int numberOfCoin;
-	FTimerHandle attackTimerHandle;
 	TSoftObjectPtr<UUserWidget> LevelMenu;
 	FHeroProperties LifeUpdate;
 	FHeroProperties CoinUpdate;
