@@ -10,6 +10,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "ARChangeLevel.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FChangeLevelEvents);
 UCLASS()
 class FANTASIAUNIMI_API AARChangeLevel : public AActor
 {
@@ -26,6 +27,7 @@ public:
 	TSoftObjectPtr<UWorld> NextLevel;
 	UPROPERTY(EditInstanceOnly, Category = "VFX")
 	UNiagaraComponent* RingVFX;
+	FChangeLevelEvents ChangeLevelEvent;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

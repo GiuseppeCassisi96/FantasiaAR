@@ -8,6 +8,7 @@
 #include "GameFramework/Actor.h"
 #include "ARDeathCollider.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FDeathEvents);
 UCLASS()
 class FANTASIAUNIMI_API AARDeathCollider : public AActor
 {
@@ -20,6 +21,7 @@ public:
 	UBoxComponent* DeathTrigger;
 	UPROPERTY(EditInstanceOnly, Category = "DeathTrigger")
 	TSoftObjectPtr<APawn> levelSpawn;
+	FDeathEvents LoseOneSoulEvent, GameOverEvent;
 
 protected:
 	// Called when the game starts or when spawned
