@@ -148,6 +148,7 @@ void UScanMenu::UpdateDialogue()
 		currentDialoguePoint->dialogueIndex++;
 		if(currentDialoguePoint->dialogueIndex == TextsDialogues.Num())
 		{
+			DialogueButton->SetVisibility(ESlateVisibility::Hidden);
 			currentDialoguePoint->bDialogueIsComplete = true;
 		}
 	}
