@@ -68,8 +68,8 @@ void AARHero::JumpAction()
 
 void AARHero::ApplyDamageToEnemy()
 {
-	UGameplayStatics::ApplyRadialDamage(this, 10.0f, GetActorLocation(),
-		attackRadius, damageType, Actors);
+	UGameplayStatics::ApplyRadialDamage(this, attackDamage, GetActorLocation(),
+		attackRadius, damageType, Actors,0,0,true);
 }
 
 void AARHero::TakeDamageFromEnemy(AActor* Actor, float damage, const UDamageType* type, AController* Contr, AActor* a)

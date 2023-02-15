@@ -30,7 +30,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "ApplyDamageToEnemy")
 	float attackTime = 3.0f;
 	UPROPERTY(EditDefaultsOnly, Category = "ApplyDamageToEnemy")
-	float attackDamage = 10.0f;
+	float attackDamage = 30.0f;
 	UPROPERTY(EditDefaultsOnly, Category = "ApplyDamageToEnemy")
 	float attackRadius = 14.0f;
 	UPROPERTY(BlueprintReadWrite, Category="AnimState")

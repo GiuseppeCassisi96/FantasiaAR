@@ -75,7 +75,6 @@ void AAREnemy::ApplyDamageToHero()
 {
 	if(enemyState == EFSMState::EFSM_Attack && enemyState != EFSMState::EFSM_Dead)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("ATTACK"));
 		UGameplayStatics::ApplyDamage(ARHeroObj, attackDamage,
 			GetController(), this, damageType);
 		float attackTime = FMath::RandRange(minAttackTime, maxAttackTime);
@@ -88,10 +87,21 @@ void AAREnemy::TakeDamageFromHero(AActor* Actor, float damage, const UDamageType
 {
 	if(enemyState != EFSMState::EFSM_Dead)
 	{
-		SetState(EFSMState::EFSM_Dead);
-		UGameplayStatics::PlaySound2D(GetWorld(), HitSound);
-		EnemyAnimInstance->Montage_Play(CombatMontage);
-		EnemyAnimInstance->Montage_JumpToSection(FName("Death"));
+		EnemyLife = EnemyLife - damage;
+		UE_LOG(LogTemp, Warning, TEXT("EnemyLife: %f"),EnemyLife);
+		UE_LOG(LogTemp, Warning, TEXT("HeroAttack: %f"),damage);
+		if(EnemyLife <= 0.0f)
+		{
+			SetState(EFSMState::EFSM_Dead);
+			UGameplayStatics::PlaySound2D(GetWorld(), HitSound);
+			EnemyAnimInstance->Montage_Play(CombatMontage);
+			EnemyAnimInstance->Montage_JumpToSection(FName("Death"));
+		}
+		else
+		{
+			UGameplayStatics::PlaySound2D(GetWorld(), HitSound);
+		}
+		
 	}
 }
 
