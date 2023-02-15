@@ -130,7 +130,9 @@ public:
 	UFUNCTION()
 	void GameOverEvent();
 	UFUNCTION()
-	void ChangeLevelEvent();
+	void ChangeLevelEvent(FString Text);
+	UFUNCTION()
+	void EndChangeLevelEvent(FString Text);
 	UFUNCTION()
 	void GoToTheNextLevel();
 
