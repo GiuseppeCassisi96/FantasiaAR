@@ -24,6 +24,7 @@ void AARChangeLevel::BeginPlay()
 {
 	Super::BeginPlay();
 	ChangeLevelTrigger->OnComponentBeginOverlap.AddDynamic(this, &AARChangeLevel::BeginTrigger);
+	ChangeLevelTrigger->OnComponentEndOverlap.AddDynamic(this, &AARChangeLevel::EndTrigger);
 }
 
 // Called every frame
@@ -41,10 +42,21 @@ void AARChangeLevel::BeginTrigger(UPrimitiveComponent* OverlappedComponent, AAct
 		AARHero* hero = Cast<AARHero>(otherActor);
 		if(hero)
 		{
-			/*UARBlueprintLibrary::StopARSession();
-			UGameplayStatics::OpenLevelBySoftObjectPtr(GetWorld(), NextLevel);*/
-			ChangeLevelEvent.Broadcast();
+			ChangeLevelEvent.Broadcast(ChangeLevelText);
 		}
 	}
 	
+}
+
+void AARChangeLevel::EndTrigger(UPrimitiveComponent* OverlappedComponent, AActor* otherActor,
+	UPrimitiveComponent* otherComponent, int otherBodyIndex)
+{
+	if (otherActor)
+	{
+		AARHero* hero = Cast<AARHero>(otherActor);
+		if (hero)
+		{
+			EndChangeLevelEvent.Broadcast(TEXT(""));
+		}
+	}
 }

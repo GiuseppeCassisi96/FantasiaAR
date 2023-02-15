@@ -28,7 +28,7 @@ void AARManager::BeginPlay()
 	bScanIsComplete = false;
 	bIsSpawned = false;
 	bIsTracked = false;
-	UARBlueprintLibrary::StopARSession();
+	//UARBlueprintLibrary::StopARSession();
 }
 
 // Called every frame

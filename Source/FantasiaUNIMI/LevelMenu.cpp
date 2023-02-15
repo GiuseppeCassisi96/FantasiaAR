@@ -48,6 +48,7 @@ void UScanMenu::ScanIsCompleteEvent()
 	deathTimerDelegate.BindUFunction(this, "HideDeathText");
 	DeathCollider->GameOverEvent.AddDynamic(this, &UScanMenu::GameOverEvent);
 	ChangeLevel->ChangeLevelEvent.AddDynamic(this, &UScanMenu::ChangeLevelEvent);
+	ChangeLevel->EndChangeLevelEvent.AddDynamic(this, &UScanMenu::UScanMenu::EndChangeLevelEvent);
 }
 
 void UScanMenu::IsSpawnedEvent()
@@ -182,18 +183,29 @@ void UScanMenu::GameOverEvent()
 	GameOverText->SetVisibility(ESlateVisibility::Visible);
 	ExitButton->SetVisibility(ESlateVisibility::Visible);
 	DeathText->SetVisibility(ESlateVisibility::Hidden);
+	
 }
 
-void UScanMenu::ChangeLevelEvent()
+void UScanMenu::ChangeLevelEvent(FString Text)
 {
 	ChangeLevelBorder->SetVisibility(ESlateVisibility::Visible);
 	ChangeLevelButton->SetVisibility(ESlateVisibility::Visible);
 	ChangeLevelText->SetVisibility(ESlateVisibility::Visible);
+	ChangeLevelText->SetText(FText::FromString(Text));
+	
+}
+
+void UScanMenu::EndChangeLevelEvent(FString Text)
+{
+	ChangeLevelBorder->SetVisibility(ESlateVisibility::Hidden);
+	ChangeLevelButton->SetVisibility(ESlateVisibility::Hidden);
+	ChangeLevelText->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void UScanMenu::GoToTheNextLevel()
 {
 	UGameplayStatics::OpenLevelBySoftObjectPtr(GetWorld(), ChangeLevel->NextLevel);
+	UARBlueprintLibrary::StopARSession();
 }
 
 
