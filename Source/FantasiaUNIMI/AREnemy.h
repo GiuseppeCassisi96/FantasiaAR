@@ -44,6 +44,8 @@ public:
 	float maxAttackTime;
 	UPROPERTY(EditDefaultsOnly, Category = "Attack")
 	float attackDamage = 10.0f;
+	UPROPERTY(EditDefaultsOnly, Category = "Life")
+	float EnemyLife = 100.0f;
 	UPROPERTY(EditDefaultsOnly, Category = "AnimMontage")
 	UAnimMontage* CombatMontage;
 	UPROPERTY(EditDefaultsOnly,Category="IA")
