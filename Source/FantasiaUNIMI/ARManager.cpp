@@ -28,7 +28,6 @@ void AARManager::BeginPlay()
 	bScanIsComplete = false;
 	bIsSpawned = false;
 	bIsTracked = false;
-	//UARBlueprintLibrary::StopARSession();
 }
 
 // Called every frame
@@ -67,22 +66,30 @@ void AARManager::InputTouch(ETouchIndex::Type fingerIndex, FVector location)
 	if (ARCorePlane != nullptr && !bIsSpawned)
 	{
 		TArray<AActor*> Actors;
-		ARLevelObj.Get()->GetAttachedActors(Actors, true, true);
-		FVector distance = GetActorLocation() - planeTr.GetLocation();
-		if(distance.Z < 40.0f)
+		APawn* ARLevelP = ARLevelObj.Get();
+		ARLevelP->GetAttachedActors(Actors, true, true);
+		ARLevelP->SetActorScale3D(planeTr.GetScale3D()/20.0f);
+		ARLevelP->SetActorRotation(planeTr.GetRotation());
+		const float verticalDistance = (GetActorLocation() - planeTr.GetLocation()).Z;
+		if(verticalDistance < 50.0f)
 		{
-			ARLevelObj.Get()->SetActorLocation(planeTr.GetLocation());
+			ARLevelP->SetActorLocation(planeTr.GetLocation());
+			UE_LOG(LogTemp, Error, TEXT("Distance: %f"), verticalDistance);
 		}
 		else
 		{
-			ARLevelObj.Get()->SetActorLocation(planeTr.GetLocation() + FVector(0.0f, 0.0f, 50.0f));
+			float verticalDistancePercent = verticalDistance * 50.0f / 100.0f;
+			UE_LOG(LogTemp, Error, TEXT("Distance: %f"), verticalDistance);
+			UE_LOG(LogTemp, Error, TEXT("DistancePercent: %f"), verticalDistancePercent);
+			ARLevelP->SetActorLocation(planeTr.GetLocation() + FVector(0.0f, 0.0f, verticalDistancePercent));
 		}
+
 		for (auto const child : Actors)
 		{
 			child->SetActorHiddenInGame(false);
 		}
-		ARLevelObj.Get()->SetActorRotation(planeTr.GetRotation());
-		const FVector SpawnLocation = ARLevelObj.Get()->GetActorLocation();
+		
+		const FVector SpawnLocation = ARLevelP->GetActorLocation();
 		GetWorld()->SpawnActor(ARHero, &SpawnLocation);
 		ARHeroObj = static_cast<AARHero*>(UGameplayStatics::GetActorOfClass(this, ARHero));
 		ARHeroObj->LoadGame();
