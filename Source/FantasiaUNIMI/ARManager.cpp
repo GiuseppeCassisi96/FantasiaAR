@@ -20,15 +20,12 @@ void AARManager::BeginPlay()
 	PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 	PlayerController->Possess(this);
 	PlayerController->ActivateTouchInterface(nullptr);
-	int xSize, ySize;
-	PlayerController->GetViewportSize(xSize, ySize);
-	ScreenSize.X = static_cast<float>(xSize);
-	ScreenSize.Y = static_cast<float>(ySize);
-	ScreenSize *= 0.5f;
+
+	
+
 	bScanIsComplete = false;
 	bIsSpawned = false;
 	bIsTracked = false;
-	//UARBlueprintLibrary::StopARSession();
 }
 
 // Called every frame
@@ -40,8 +37,6 @@ void AARManager::Tick(float DeltaTime)
 		Results = UARBlueprintLibrary::GetAllGeometries();
 		if (Results.Num() > 0)
 		{
-			ARCorePlane = Results[0];
-			planeTr = ARCorePlane->GetLocalToWorldTransform();
 			bScanIsComplete = true;
 			OnScanIsComplete.Broadcast();
 		}
@@ -64,43 +59,72 @@ void AARManager::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 
 void AARManager::InputTouch(ETouchIndex::Type fingerIndex, FVector location)
 {
-	if (ARCorePlane != nullptr && !bIsSpawned)
+	
+	if (!bIsSpawned)
 	{
-		TArray<AActor*> Actors;
-		ARLevelObj.Get()->GetAttachedActors(Actors, true, true);
-		FVector distance = GetActorLocation() - planeTr.GetLocation();
-		if(distance.Z < 40.0f)
+		bool isCurrentlyPressed;
+		PlayerController->GetInputTouchState(fingerIndex, location.X, location.Y, isCurrentlyPressed);
+		FVector WorldLocation, Direction;
+		PlayerController->DeprojectScreenPositionToWorld(location.X, location.Y, WorldLocation, Direction);
+		Direction *= 100.0f;
+		WorldLocation += Direction;
+		float minDistance = 100000000000.0f;
+		for (auto Tracked : Results)
 		{
-			ARLevelObj.Get()->SetActorLocation(planeTr.GetLocation());
+			float distance = UKismetMathLibrary::Vector_Distance(Tracked->GetLocalToWorldTransform().GetLocation()
+				, WorldLocation);
+			if (distance <= minDistance)
+			{
+				minDistance = distance;
+				ARCorePlane = Tracked;
+			}
 		}
-		else
+		planeTr = ARCorePlane->GetLocalToWorldTransform();
+
+		//If for safe
+		if(ARCorePlane != nullptr)
 		{
-			ARLevelObj.Get()->SetActorLocation(planeTr.GetLocation() + FVector(0.0f, 0.0f, 50.0f));
+			TArray<AActor*> Actors;
+			APawn* ARLevelP = ARLevelObj.Get();
+			ARLevelP->GetAttachedActors(Actors, true, true);
+			ARLevelP->SetActorScale3D(planeTr.GetScale3D() / 20.0f);
+			ARLevelP->SetActorRotation(planeTr.GetRotation());
+			const float verticalDistance = (GetActorLocation() - planeTr.GetLocation()).Z;
+			if (verticalDistance < 50.0f)
+			{
+				ARLevelP->SetActorLocation(planeTr.GetLocation());
+			}
+			else
+			{
+				float verticalDistancePercent = verticalDistance * 50.0f / 100.0f;
+				ARLevelP->SetActorLocation(planeTr.GetLocation() + FVector(0.0f, 0.0f, verticalDistancePercent));
+			}
+			for (auto const child : Actors)
+			{
+				child->SetActorHiddenInGame(false);
+			}
+
+			const FVector SpawnLocation = ARLevelP->GetActorLocation();
+			GetWorld()->SpawnActor(ARHero, &SpawnLocation);
+			ARHeroObj = static_cast<AARHero*>(UGameplayStatics::GetActorOfClass(this, ARHero));
+			ARHeroObj->LoadGame();
+			bIsSpawned = true;
+			for (auto waypoint : wayPoints)
+			{
+				static_cast<AARWaypoint*>(waypoint.Get())->SpawCharacter();
+			}
+			PlayerController->ActivateTouchInterface(TouchInterface);
+			OnIsSpawned.Broadcast();
+			ARHeroObj->CoinUpdate.Broadcast();
+			ARHeroObj->LifeUpdate.Broadcast();
+			ARHeroObj->SoulsUpdate.Broadcast();
+			OnForwardMovement.AddDynamic(ARHeroObj, &AARHero::ForwardMovement);
+			OnRightMovement.AddDynamic(ARHeroObj, &AARHero::RightMovement);
+			OnJump.AddDynamic(ARHeroObj, &AARHero::JumpAction);
+			OnAttack.AddDynamic(ARHeroObj, &AARHero::Attack);
+			UGameplayStatics::PlaySound2D(GetWorld(), WorldSound);
 		}
-		for (auto const child : Actors)
-		{
-			child->SetActorHiddenInGame(false);
-		}
-		ARLevelObj.Get()->SetActorRotation(planeTr.GetRotation());
-		const FVector SpawnLocation = ARLevelObj.Get()->GetActorLocation();
-		GetWorld()->SpawnActor(ARHero, &SpawnLocation);
-		ARHeroObj = static_cast<AARHero*>(UGameplayStatics::GetActorOfClass(this, ARHero));
-		ARHeroObj->LoadGame();
-		bIsSpawned = true;
-		for (auto waypoint : wayPoints)
-		{
-			static_cast<AARWaypoint*>(waypoint.Get())->SpawCharacter();
-		}
-		PlayerController->ActivateTouchInterface(TouchInterface);
-		OnIsSpawned.Broadcast();
-		ARHeroObj->CoinUpdate.Broadcast();
-		ARHeroObj->LifeUpdate.Broadcast();
-		ARHeroObj->SoulsUpdate.Broadcast();
-		OnForwardMovement.AddDynamic(ARHeroObj, &AARHero::ForwardMovement);
-		OnRightMovement.AddDynamic(ARHeroObj, &AARHero::RightMovement);
-		OnJump.AddDynamic(ARHeroObj, &AARHero::JumpAction);
-		OnAttack.AddDynamic(ARHeroObj, &AARHero::Attack);
-		UGameplayStatics::PlaySound2D(GetWorld(), WorldSound);
+		
 	}
 
 }

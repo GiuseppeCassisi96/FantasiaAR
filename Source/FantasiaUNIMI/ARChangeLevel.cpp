@@ -31,7 +31,6 @@ void AARChangeLevel::BeginPlay()
 void AARChangeLevel::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 void AARChangeLevel::BeginTrigger(UPrimitiveComponent* OverlappedComponent, AActor* otherActor,
