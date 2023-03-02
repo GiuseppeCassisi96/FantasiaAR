@@ -107,8 +107,8 @@ void UScanMenu::PauseFunction()
 
 void UScanMenu::GoToTheMenu()
 {
-	UARBlueprintLibrary::StopARSession();
 	UGameplayStatics::OpenLevelBySoftObjectPtr(GetWorld(), MenuLevel);
+	UARBlueprintLibrary::StopARSession();
 }
 
 void UScanMenu::OnStartDialogue(TArray<FString> dialogues, AActor* DialoguePoint)

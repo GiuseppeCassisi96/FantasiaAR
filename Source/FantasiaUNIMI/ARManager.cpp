@@ -20,9 +20,6 @@ void AARManager::BeginPlay()
 	PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 	PlayerController->Possess(this);
 	PlayerController->ActivateTouchInterface(nullptr);
-
-	
-
 	bScanIsComplete = false;
 	bIsSpawned = false;
 	bIsTracked = false;

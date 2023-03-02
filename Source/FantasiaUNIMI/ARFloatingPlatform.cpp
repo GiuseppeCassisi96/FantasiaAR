@@ -27,8 +27,7 @@ void AARFloatingPlatform::BeginPlay()
 void AARFloatingPlatform::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	FVector Direction;
-	Direction = MoveDir * UKismetMathLibrary::Sin(iteration) * speed;
+	const FVector Direction = MoveDir * UKismetMathLibrary::Sin(iteration) * speed;
 	AddActorLocalOffset(Direction);
 	iteration += 1/amplitude;
 }
