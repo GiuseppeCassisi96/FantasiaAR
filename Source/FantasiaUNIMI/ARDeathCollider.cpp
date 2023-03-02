@@ -38,15 +38,15 @@ void AARDeathCollider::Death(UPrimitiveComponent* OverlappedComponent, AActor* o
 		{
 			LoseOneSoulEvent.Broadcast();
 			hero->heroSouls--;
+			hero->heroLife = 100.0f;
 			if(hero->heroSouls <= 0)
 			{
-				/*UARBlueprintLibrary::StopARSession();
-				UGameplayStatics::OpenLevel(GetWorld(), FName("MainMenu"));*/
 				hero->SoulsUpdate.Broadcast();
 				GameOverEvent.Broadcast();
 				return;
 			}
 			hero->SoulsUpdate.Broadcast();
+			hero->LifeUpdate.Broadcast();
 			otherActor->SetActorLocation(levelSpawn.Get()->GetActorLocation());
 		}
 		

@@ -20,7 +20,7 @@ public:
 	 * @brief Button that loads the level1 level
 	 */
 	UPROPERTY(EditDefaultsOnly, meta=(BindWidget))
-	UButton* NextButton;
+	UButton* StartsButton;
 	/**
 	 * @brief Button that replaces the old text with the new text. The new text will be got from 'ArrayOfText'
 	 */

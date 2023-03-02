@@ -9,7 +9,7 @@
  void UStoryMenu::NativeConstruct()
 {
 	Super::NativeConstruct();
-	NextButton->OnPressed.AddDynamic(this, &UStoryMenu::InitStory);
+	StartsButton->OnPressed.AddDynamic(this, &UStoryMenu::InitStory);
 	ContinueButton->OnPressed.AddDynamic(this, &UStoryMenu::ViewNewText);
 	StoryText->SetText(FText::FromString(ArrayOfText[0]));
 }
