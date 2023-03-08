@@ -10,6 +10,7 @@
 #include "ARDialoguePoint.h"
 #include "ARDeathCollider.h"
 #include "ARChangeLevel.h"
+#include "ARHero.h"
 #include "Components/Button.h"
 #include "Components/CircularThrobber.h"
 #include "Components/Image.h"

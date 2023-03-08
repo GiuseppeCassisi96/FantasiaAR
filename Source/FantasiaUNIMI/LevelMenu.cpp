@@ -68,6 +68,7 @@ void UScanMenu::IsSpawnedEvent()
 	Manager->ARHeroObj->LifeUpdate.AddDynamic(this, &UScanMenu::UpdateHeroLifeUI);
 	Manager->ARHeroObj->CoinUpdate.AddDynamic(this, &UScanMenu::UpdateHeroCoinUI);
 	Manager->ARHeroObj->SoulsUpdate.AddDynamic(this, &UScanMenu::UpdateHeroSoulsUI);
+	Manager->ARHeroObj->DeathEvent.AddDynamic(this, &UScanMenu::GameOverEvent);
 	
 }
 

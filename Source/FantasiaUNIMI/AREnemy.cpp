@@ -108,7 +108,7 @@ void AAREnemy::TakeDamageFromHero(AActor* Actor, float damage, const UDamageType
 void AAREnemy::Attack()
 {
 	bIsAttacking = true;
-	if(EnemyAnimInstance && enemyState != EFSMState::EFSM_Dead)
+	if(EnemyAnimInstance && enemyState != EFSMState::EFSM_Dead && !heroIsDead)
 	{
 		EnemyAnimInstance->Montage_Play(CombatMontage);
 		EnemyAnimInstance->Montage_JumpToSection(FName("Attack1"), CombatMontage);

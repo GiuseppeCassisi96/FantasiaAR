@@ -7,6 +7,7 @@
 #include "Components/BoxComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "ARSaveGame.h"
+#include "AREnemy.h"
 #include "Sound/SoundCue.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -14,6 +15,7 @@
 #include "ARHero.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FHeroProperties);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FDeath);
 
 UCLASS()
 class FANTASIAUNIMI_API AARHero : public ACharacter
@@ -50,6 +52,8 @@ public:
 	FHeroProperties LifeUpdate;
 	FHeroProperties CoinUpdate;
 	FHeroProperties SoulsUpdate;
+	FDeath DeathEvent;
+	bool isDead = false;
 	
 
 protected:

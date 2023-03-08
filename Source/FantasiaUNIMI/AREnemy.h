@@ -54,7 +54,7 @@ public:
 	USphereComponent* combatSphere;
 	UPROPERTY(EditDefaultsOnly, Category = "Sound")
 	USoundCue* HitSound;
-	
+	bool heroIsDead;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -68,6 +68,7 @@ protected:
 	FRotator rotation;
 	FTimerHandle attackTimer;
 	bool bIsAttacking;
+	
 	
 	
 

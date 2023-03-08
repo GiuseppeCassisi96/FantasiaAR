@@ -34,7 +34,7 @@ void AARDeathCollider::Death(UPrimitiveComponent* OverlappedComponent, AActor* o
 	if(otherActor)
 	{
 		AARHero* hero = Cast<AARHero>(otherActor);
-		if(hero)
+		if(hero->Tags[0] == "Hero")
 		{
 			LoseOneSoulEvent.Broadcast();
 			hero->heroSouls--;

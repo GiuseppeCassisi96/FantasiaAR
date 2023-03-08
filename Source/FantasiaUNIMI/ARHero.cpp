@@ -74,21 +74,26 @@ void AARHero::ApplyDamageToEnemy()
 
 void AARHero::TakeDamageFromEnemy(AActor* Actor, float damage, const UDamageType* type, AController* Contr, AActor* a)
 {
-	heroLife -= damage;
-	UGameplayStatics::PlaySound2D(GetWorld(), HitSound);
-	if (heroLife <= 0)
+	if(!isDead)
 	{
-		heroSouls--;
-		heroLife = 100;
-		if(heroSouls <= 0)
+		heroLife -= damage;
+		UGameplayStatics::PlaySound2D(GetWorld(), HitSound);
+		if (heroLife <= 0)
 		{
-			UARBlueprintLibrary::StopARSession();
-			UGameplayStatics::OpenLevel(GetWorld(), FName("MainMenu"));
-			return;
+			heroSouls--;
+			heroLife = 100;
+			if (heroSouls <= 0)
+			{
+				SetActorHiddenInGame(true);
+				Cast<AAREnemy>(a)->heroIsDead = true;
+				DeathEvent.Broadcast();
+				return;
+			}
+			SoulsUpdate.Broadcast();
 		}
-		SoulsUpdate.Broadcast();
+		LifeUpdate.Broadcast();
 	}
-	LifeUpdate.Broadcast();
+	
 }
 
 void AARHero::Attack()
