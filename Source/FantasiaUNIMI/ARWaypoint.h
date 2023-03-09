@@ -8,6 +8,7 @@
 #include "GameFramework/Character.h"
 #include "ARWaypoint.generated.h"
 
+//Class responsible for spawning enemies
 UCLASS()
 class FANTASIAUNIMI_API AARWaypoint : public AActor
 {

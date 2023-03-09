@@ -40,7 +40,7 @@ void AARDialoguePoint::DialogueBegin(UPrimitiveComponent* OverlappedComponent, A
 		AARHero* hero = Cast<AARHero>(otherActor);
 		if(hero)
 		{
-			StartDialogue.Broadcast(dialogues, this);
+			OnStartDialogue.Broadcast(dialogues, this);
 			bDialogueIsStart = true;
 		}
 	}
@@ -54,7 +54,7 @@ void AARDialoguePoint::DialogueEnd(UPrimitiveComponent* OverlappedComponent, AAc
 		AARHero* hero = Cast<AARHero>(otherActor);
 		if (hero)
 		{
-			EndDialogue.Broadcast(this);
+			OnEndDialogue.Broadcast(this);
 			bDialogueIsStart = false;
 		}
 	}

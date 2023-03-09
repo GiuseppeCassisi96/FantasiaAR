@@ -24,6 +24,7 @@ void UMainMenu::StartsStory()
 	UGameplayStatics::OpenLevelBySoftObjectPtr(GetWorld(), Story);
 }
 
+//I load the game saving
 void UMainMenu::LoadLevel()
 {
 	UARSaveGame* LoadSaveGameInstance = Cast<UARSaveGame>( UGameplayStatics::CreateSaveGameObject(UARSaveGame::StaticClass()));

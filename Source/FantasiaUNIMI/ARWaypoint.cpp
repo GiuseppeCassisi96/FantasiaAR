@@ -25,6 +25,7 @@ void AARWaypoint::Tick(float DeltaTime)
 
 }
 
+//Will be called by ARManager instance 
 void AARWaypoint::SpawCharacter()
 {
 	const FVector spawnLocation = GetActorLocation();

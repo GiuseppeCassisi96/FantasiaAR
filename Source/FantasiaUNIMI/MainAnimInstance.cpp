@@ -7,12 +7,14 @@ void UMainAnimInstance::NativeInitializeAnimation()
 {
 	if(animatedCharacter == nullptr)
 	{
+		//I'm getting the pawn owner of this anim instance
 		animatedCharacter = TryGetPawnOwner();
 	}
 }
 
 void UMainAnimInstance::UpdateAnimationProperties()
 {
+	//I Update properties that are useful for animations 
 	if(animatedCharacter)
 	{
 		FVector speed = animatedCharacter->GetVelocity();

@@ -21,7 +21,7 @@ public:
 	UBoxComponent* DeathTrigger;
 	UPROPERTY(EditInstanceOnly, Category = "DeathTrigger")
 	TSoftObjectPtr<APawn> levelSpawn;
-	FDeathEvents LoseOneSoulEvent, GameOverEvent;
+	FDeathEvents OnLoseOneSoul, OnGameOver;
 
 protected:
 	// Called when the game starts or when spawned

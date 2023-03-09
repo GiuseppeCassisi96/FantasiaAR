@@ -8,27 +8,30 @@
 void UScanMenu::NativeConstruct()
 {
 	Super::NativeConstruct();
+
 	ScanButton->OnClicked.AddUniqueDynamic(this, &UScanMenu::StartSession);
 	PauseButton->OnClicked.AddUniqueDynamic(this, &UScanMenu::PauseFunction);
 	MenuButton->OnClicked.AddUniqueDynamic(this, &UScanMenu::GoToTheMenu);
 	DialogueButton->OnClicked.AddUniqueDynamic(this, &UScanMenu::UpdateDialogue);
+	ExitButton->OnClicked.AddDynamic(this, &UScanMenu::GoToTheMenu);
+	ChangeLevelButton->OnClicked.AddDynamic(this, &UScanMenu::GoToTheNextLevel);
+
 	DeathCollider = Cast<AARDeathCollider>(UGameplayStatics::GetActorOfClass(GetWorld(), 
 		DeathColliderClass));
 	ChangeLevel = Cast<AARChangeLevel>(UGameplayStatics::GetActorOfClass(GetWorld(),
 		ChangeLevelClass));
-	ExitButton->OnClicked.AddDynamic(this, &UScanMenu::GoToTheMenu);
-	ChangeLevelButton->OnClicked.AddDynamic(this, &UScanMenu::GoToTheNextLevel);
+	
 }
 
 void UScanMenu::StartSession()
 {
 	Manager = Cast<AARManager>(UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetPawn());
-	Manager->OnScanIsComplete.AddDynamic(this, &UScanMenu::ScanIsCompleteEvent);
-	Manager->OnIsSpawned.AddDynamic(this, &UScanMenu::IsSpawnedEvent);
+	Manager->OnScanIsComplete.AddDynamic(this, &UScanMenu::ScanIsComplete);
+	Manager->OnIsSpawned.AddDynamic(this, &UScanMenu::IsSpawned);
 	for (int i = 0; i < Manager->DialoguePoints.Num(); i++)
 	{
-		Cast<AARDialoguePoint>(Manager->DialoguePoints[i].Get())->StartDialogue.AddDynamic(this, &UScanMenu::OnStartDialogue);
-		Cast<AARDialoguePoint>(Manager->DialoguePoints[i].Get())->EndDialogue.AddDynamic(this, &UScanMenu::OnEndDialogue);
+		Cast<AARDialoguePoint>(Manager->DialoguePoints[i].Get())->OnStartDialogue.AddDynamic(this, &UScanMenu::StartDialogue);
+		Cast<AARDialoguePoint>(Manager->DialoguePoints[i].Get())->OnEndDialogue.AddDynamic(this, &UScanMenu::EndDialogue);
 	}
 	if(Manager->SavePoint != nullptr)
 	{
@@ -40,18 +43,19 @@ void UScanMenu::StartSession()
 	Scanning->SetVisibility(ESlateVisibility::Visible);
 }
 
-void UScanMenu::ScanIsCompleteEvent()
+void UScanMenu::ScanIsComplete()
 {
 	Scanning->SetVisibility(ESlateVisibility::Hidden);
 	TouchText->SetVisibility(ESlateVisibility::Visible);
-	DeathCollider->LoseOneSoulEvent.AddDynamic(this, &UScanMenu::LoseOneSoulEvent);
+
+	DeathCollider->OnLoseOneSoul.AddDynamic(this, &UScanMenu::LoseOneSoul);
 	deathTimerDelegate.BindUFunction(this, "HideDeathText");
-	DeathCollider->GameOverEvent.AddDynamic(this, &UScanMenu::GameOverEvent);
-	ChangeLevel->ChangeLevelEvent.AddDynamic(this, &UScanMenu::ChangeLevelEvent);
-	ChangeLevel->EndChangeLevelEvent.AddDynamic(this, &UScanMenu::UScanMenu::EndChangeLevelEvent);
+	DeathCollider->OnGameOver.AddDynamic(this, &UScanMenu::GameOver);
+	ChangeLevel->OnNextLevelUI.AddDynamic(this, &UScanMenu::NextLevelUI);
+	ChangeLevel->OnEndNextLevelUI.AddDynamic(this, &UScanMenu::UScanMenu::EndNextLevelUI);
 }
 
-void UScanMenu::IsSpawnedEvent()
+void UScanMenu::IsSpawned()
 {
 	TouchText->SetVisibility(ESlateVisibility::Hidden);
 	Coin->SetVisibility(ESlateVisibility::Visible);
@@ -61,30 +65,31 @@ void UScanMenu::IsSpawnedEvent()
 	CoinText->SetVisibility(ESlateVisibility::Visible);
 	SoulText->SetVisibility(ESlateVisibility::Visible);
 	PauseButton->SetVisibility(ESlateVisibility::Visible);
-	AButton->SetVisibility(ESlateVisibility::Visible);
-	BButton->SetVisibility(ESlateVisibility::Visible);
-	AButton->OnPressed.AddDynamic(Manager, &AARManager::JumpAction);
-	BButton->OnPressed.AddDynamic(Manager, &AARManager::AttackAction);
-	Manager->ARHeroObj->LifeUpdate.AddDynamic(this, &UScanMenu::UpdateHeroLifeUI);
-	Manager->ARHeroObj->CoinUpdate.AddDynamic(this, &UScanMenu::UpdateHeroCoinUI);
-	Manager->ARHeroObj->SoulsUpdate.AddDynamic(this, &UScanMenu::UpdateHeroSoulsUI);
-	Manager->ARHeroObj->DeathEvent.AddDynamic(this, &UScanMenu::GameOverEvent);
+	JumpButton->SetVisibility(ESlateVisibility::Visible);
+	AttackButton->SetVisibility(ESlateVisibility::Visible);
+
+	JumpButton->OnPressed.AddDynamic(Manager, &AARManager::JumpAction);
+	AttackButton->OnPressed.AddDynamic(Manager, &AARManager::AttackAction);
+	Manager->ARHeroObj->OnLifeUpdate.AddDynamic(this, &UScanMenu::UpdateLife);
+	Manager->ARHeroObj->OnCoinUpdate.AddDynamic(this, &UScanMenu::UpdateCoin);
+	Manager->ARHeroObj->OnSoulsUpdate.AddDynamic(this, &UScanMenu::UpdateSouls);
+	Manager->ARHeroObj->OnDeathEvent.AddDynamic(this, &UScanMenu::GameOver);
 	
 }
 
-void UScanMenu::UpdateHeroLifeUI()
+void UScanMenu::UpdateLife()
 {
 	float HLife = Manager->ARHeroObj->heroLife;
 	LifeText->SetText(FText::FromString(FString::FromInt(HLife)));
 }
 
-void UScanMenu::UpdateHeroCoinUI()
+void UScanMenu::UpdateCoin()
 {
 	float NCoin = Manager->ARHeroObj->numberOfCoin;
 	CoinText->SetText(FText::FromString(FString::FromInt(NCoin)));
 }
 
-void UScanMenu::UpdateHeroSoulsUI()
+void UScanMenu::UpdateSouls()
 {
 	float HSouls = Manager->ARHeroObj->heroSouls;
 	SoulText->SetText(FText::FromString(FString::FromInt(HSouls)));
@@ -112,7 +117,7 @@ void UScanMenu::GoToTheMenu()
 	UARBlueprintLibrary::StopARSession();
 }
 
-void UScanMenu::OnStartDialogue(TArray<FString> dialogues, AActor* DialoguePoint)
+void UScanMenu::StartDialogue(TArray<FString> dialogues, AActor* DialoguePoint)
 {
 	currentDialoguePoint = Cast<AARDialoguePoint>(DialoguePoint);
 	if(!currentDialoguePoint->bDialogueIsComplete)
@@ -133,7 +138,7 @@ void UScanMenu::OnStartDialogue(TArray<FString> dialogues, AActor* DialoguePoint
 	}
 }
 
-void UScanMenu::OnEndDialogue(AActor* DialoguePoint)
+void UScanMenu::EndDialogue(AActor* DialoguePoint)
 {
 	DialogueBorder->SetVisibility(ESlateVisibility::Hidden);
 	DialogueText->SetVisibility(ESlateVisibility::Hidden);
@@ -167,7 +172,7 @@ void UScanMenu::HiddenSaveText()
 	SaveText->SetVisibility(ESlateVisibility::Hidden);
 }
 
-void UScanMenu::LoseOneSoulEvent()
+void UScanMenu::LoseOneSoul()
 {
 	DeathText->SetVisibility(ESlateVisibility::Visible);
 	GetWorld()->GetTimerManager().SetTimer(deathTimer, deathTimerDelegate, 5.0f, false);
@@ -178,7 +183,7 @@ void UScanMenu::HideDeathText()
 	DeathText->SetVisibility(ESlateVisibility::Hidden);
 }
 
-void UScanMenu::GameOverEvent()
+void UScanMenu::GameOver()
 {
 	DeathBorder->SetVisibility(ESlateVisibility::Visible);
 	GameOverText->SetVisibility(ESlateVisibility::Visible);
@@ -187,7 +192,7 @@ void UScanMenu::GameOverEvent()
 	
 }
 
-void UScanMenu::ChangeLevelEvent(FString Text)
+void UScanMenu::NextLevelUI(FString Text)
 {
 	ChangeLevelBorder->SetVisibility(ESlateVisibility::Visible);
 	ChangeLevelButton->SetVisibility(ESlateVisibility::Visible);
@@ -196,7 +201,7 @@ void UScanMenu::ChangeLevelEvent(FString Text)
 	
 }
 
-void UScanMenu::EndChangeLevelEvent(FString Text)
+void UScanMenu::EndNextLevelUI(FString Text)
 {
 	ChangeLevelBorder->SetVisibility(ESlateVisibility::Hidden);
 	ChangeLevelButton->SetVisibility(ESlateVisibility::Hidden);

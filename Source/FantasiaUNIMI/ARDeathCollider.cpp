@@ -36,17 +36,17 @@ void AARDeathCollider::Death(UPrimitiveComponent* OverlappedComponent, AActor* o
 		AARHero* hero = Cast<AARHero>(otherActor);
 		if(hero->Tags[0] == "Hero")
 		{
-			LoseOneSoulEvent.Broadcast();
+			OnLoseOneSoul.Broadcast();
 			hero->heroSouls--;
 			hero->heroLife = 100.0f;
 			if(hero->heroSouls <= 0)
 			{
-				hero->SoulsUpdate.Broadcast();
-				GameOverEvent.Broadcast();
+				hero->OnSoulsUpdate.Broadcast();
+				OnGameOver.Broadcast();
 				return;
 			}
-			hero->SoulsUpdate.Broadcast();
-			hero->LifeUpdate.Broadcast();
+			hero->OnSoulsUpdate.Broadcast();
+			hero->OnLifeUpdate.Broadcast();
 			otherActor->SetActorLocation(levelSpawn.Get()->GetActorLocation());
 		}
 		

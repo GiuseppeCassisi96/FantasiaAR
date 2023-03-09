@@ -28,8 +28,8 @@ public:
 	USkeletalMeshComponent* NPCBody;
 	UPROPERTY(BlueprintReadOnly, Category="Dialogues")
 	bool bDialogueIsStart;
-	FStartDialogueEvent StartDialogue;
-	FEndDialogueEvent EndDialogue;
+	FStartDialogueEvent OnStartDialogue;
+	FEndDialogueEvent OnEndDialogue;
 	int dialogueIndex;
 	bool bDialogueIsComplete;
 protected:

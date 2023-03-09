@@ -42,7 +42,7 @@ void AARCoin::TakeTheCoin(UPrimitiveComponent* OverlappedComponent, AActor* othe
 		{
 			UGameplayStatics::PlaySound2D(GetWorld(), CoinSound);
 			hero->IncrementCoin();
-			hero->CoinUpdate.Broadcast();
+			hero->OnCoinUpdate.Broadcast();
 			Destroy();
 		}
 	}

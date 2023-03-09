@@ -72,11 +72,11 @@ void AARHero::ApplyDamageToEnemy()
 		attackRadius, damageType, Actors,0,0,true);
 }
 
-void AARHero::TakeDamageFromEnemy(AActor* Actor, float damage, const UDamageType* type, AController* Contr, AActor* a)
+void AARHero::TakeDamageFromEnemy(AActor* DamagedActor, float Damage, const UDamageType* TypeOfDamage, AController* InstigatedBy, AActor* DamageCauser)
 {
 	if(!isDead)
 	{
-		heroLife -= damage;
+		heroLife -= Damage;
 		UGameplayStatics::PlaySound2D(GetWorld(), HitSound);
 		if (heroLife <= 0)
 		{
@@ -85,13 +85,13 @@ void AARHero::TakeDamageFromEnemy(AActor* Actor, float damage, const UDamageType
 			if (heroSouls <= 0)
 			{
 				SetActorHiddenInGame(true);
-				Cast<AAREnemy>(a)->heroIsDead = true;
-				DeathEvent.Broadcast();
+				Cast<AAREnemy>(DamageCauser)->heroIsDead = true;
+				OnDeathEvent.Broadcast();
 				return;
 			}
-			SoulsUpdate.Broadcast();
+			OnSoulsUpdate.Broadcast();
 		}
-		LifeUpdate.Broadcast();
+		OnLifeUpdate.Broadcast();
 	}
 	
 }
@@ -100,6 +100,7 @@ void AARHero::Attack()
 {
 	if(!bAttackState)
 	{
+		//Will be set false to animBP
 		bAttackState = true;
 		HeroAnimInstance->Montage_Play(AttackMontage);
 		HeroAnimInstance->Montage_JumpToSection(FName("Attack"));
@@ -117,7 +118,7 @@ void AARHero::IncrementCoin()
 		{
 			UGameplayStatics::PlaySound2D(GetWorld(), PowerUpSound);
 			heroLife += 10;
-			LifeUpdate.Broadcast();
+			OnLifeUpdate.Broadcast();
 		}
 		
 	}

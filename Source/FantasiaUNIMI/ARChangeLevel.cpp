@@ -41,7 +41,7 @@ void AARChangeLevel::BeginTrigger(UPrimitiveComponent* OverlappedComponent, AAct
 		AARHero* hero = Cast<AARHero>(otherActor);
 		if(hero)
 		{
-			ChangeLevelEvent.Broadcast(ChangeLevelText);
+			OnNextLevelUI.Broadcast(ChangeLevelText);
 		}
 	}
 	
@@ -55,7 +55,7 @@ void AARChangeLevel::EndTrigger(UPrimitiveComponent* OverlappedComponent, AActor
 		AARHero* hero = Cast<AARHero>(otherActor);
 		if (hero)
 		{
-			EndChangeLevelEvent.Broadcast(TEXT(""));
+			OnEndNextLevelUI.Broadcast(TEXT(""));
 		}
 	}
 }

@@ -33,11 +33,11 @@ public:
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UButton* ChangeLevelButton;
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
-	UButton* AButton;
+	UButton* JumpButton;
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UButton* ExitButton;
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
-	UButton* BButton;
+	UButton* AttackButton;
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UButton* PauseButton;
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
@@ -99,15 +99,15 @@ public:
 	void StartSession();
 
 	UFUNCTION()
-	void ScanIsCompleteEvent();
+	void ScanIsComplete();
 	UFUNCTION()
-	void IsSpawnedEvent();
+	void IsSpawned();
 	UFUNCTION()
-	void UpdateHeroLifeUI();
+	void UpdateLife();
 	UFUNCTION()
-	void UpdateHeroCoinUI();
+	void UpdateCoin();
 	UFUNCTION()
-	void UpdateHeroSoulsUI();
+	void UpdateSouls();
 	UFUNCTION()
 	void PauseFunction();
 
@@ -115,9 +115,9 @@ public:
 	void GoToTheMenu();
 
 	UFUNCTION()
-	void OnStartDialogue(TArray<FString> dialogues,  AActor* DialoguePoint);
+	void StartDialogue(TArray<FString> dialogues,  AActor* DialoguePoint);
 	UFUNCTION()
-	void OnEndDialogue(AActor* DialoguePoint);
+	void EndDialogue(AActor* DialoguePoint);
 	UFUNCTION()
 	void UpdateDialogue();
 	UFUNCTION()
@@ -125,15 +125,15 @@ public:
 	UFUNCTION()
 	void HiddenSaveText();
 	UFUNCTION()
-	void LoseOneSoulEvent();
+	void LoseOneSoul();
 	UFUNCTION()
 	void HideDeathText();
 	UFUNCTION()
-	void GameOverEvent();
+	void GameOver();
 	UFUNCTION()
-	void ChangeLevelEvent(FString Text);
+	void NextLevelUI(FString Text);
 	UFUNCTION()
-	void EndChangeLevelEvent(FString Text);
+	void EndNextLevelUI(FString Text);
 	UFUNCTION()
 	void GoToTheNextLevel();
 
