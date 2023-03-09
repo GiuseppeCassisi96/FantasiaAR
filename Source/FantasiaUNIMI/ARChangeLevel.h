@@ -47,7 +47,7 @@ public:
 	/**
 	 * @brief Events that make the change level's UI visible or hidden
 	 */
-	FChangeLevelEvents ChangeLevelEvent, EndChangeLevelEvent;
+	FChangeLevelEvents OnNextLevelUI, OnEndNextLevelUI;
 protected:
 
 	virtual void BeginPlay() override;

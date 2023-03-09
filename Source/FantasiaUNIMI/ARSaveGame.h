@@ -10,6 +10,7 @@
  * 
  */
 USTRUCT(BlueprintType)
+//Data that will be saved in saving slot
 struct FCharacterData
 {
 	GENERATED_BODY()

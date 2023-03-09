@@ -13,7 +13,7 @@
 #include "ARManager.generated.h"
 
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FUIEvents);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FARSessionEvents);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FHeroMovements, float, inputValue, FVector, cameraAxe);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FHeroJump);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FHeroAttack);
@@ -82,11 +82,11 @@ public:
 	/**
 	 * @brief Event that will be executed when the scan will be completed
 	 */
-	FUIEvents OnScanIsComplete;
+	FARSessionEvents OnScanIsComplete;
 	/**
 	 * @brief Event that will be executed when the level will be spawned 
 	 */
-	FUIEvents OnIsSpawned;
+	FARSessionEvents OnIsSpawned;
 	/**
 	 * @brief Events responsible for the character's movement 
 	 */
@@ -105,9 +105,6 @@ protected:
 	 */
 	UPROPERTY()
 	UARTrackedGeometry* ARCorePlane;
-	
-	UPROPERTY(BlueprintReadWrite)
-	bool bIsTracked;
 	/**
 	 * @brief Transform of plane
 	 */

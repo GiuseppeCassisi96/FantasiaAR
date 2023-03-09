@@ -49,10 +49,10 @@ public:
 	USoundCue* PowerUpSound;
 	int numberOfCoin;
 	TSoftObjectPtr<UUserWidget> LevelMenu;
-	FHeroProperties LifeUpdate;
-	FHeroProperties CoinUpdate;
-	FHeroProperties SoulsUpdate;
-	FDeath DeathEvent;
+	FHeroProperties OnLifeUpdate;
+	FHeroProperties OnCoinUpdate;
+	FHeroProperties OnSoulsUpdate;
+	FDeath OnDeathEvent;
 	bool isDead = false;
 	
 
@@ -79,10 +79,11 @@ public:
 	void RightMovement(float inputValue, FVector ARCameraRightAxe);
 	UFUNCTION()
 	void JumpAction();
+	//is called inside animBP associated to this CharacterBP
 	UFUNCTION(BlueprintCallable)
 	void ApplyDamageToEnemy();
 	UFUNCTION()
-	void TakeDamageFromEnemy(AActor* Actor, float damage, const UDamageType* type, AController* Contr, AActor* a);
+	void TakeDamageFromEnemy(AActor* DamagedActor, float Damage, const UDamageType* TypeOfDamage, AController* InstigatedBy, AActor* DamageCauser);
 	UFUNCTION()
 	void Attack();
 

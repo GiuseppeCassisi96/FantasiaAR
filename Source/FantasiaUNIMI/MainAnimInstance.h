@@ -10,6 +10,7 @@
 /**
  * 
  */
+//AnimiInstance for Enemies 
 UCLASS()
 class FANTASIAUNIMI_API UMainAnimInstance : public UAnimInstance
 {
