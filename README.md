@@ -1,2 +1,5 @@
 # FantasiaAR
-Fantasia is a 3D game AR markerless developed for Android devices using Unreal Engine 5. When the level starts, the player has to scan the environment with his phone to find a suitable area to spawn the level. When the environment is scanned, he can touch the screen to spawn the level. The goal of game is to reach the end of level without die. The player, during his adventure, will encounter some enemies. The player can save his progress thanks to a basic save system. The player can also do the tutorial before to starts the adventure in order to learns the game basics. The project was developed for an university course called "Realtà Virtuale " held by the professor N. A. Borghese.
+Fantasia is a 3D AR markerless game developed for Android devices using Unreal Engine 5. The
+player's goal is to reach the end of the level by overcoming various environmental obstacles. During
+the game, the player will face some enemies. The game has a basic save system and game lore. To
+learn the game, the player can complete the tutorial levels before starting the main mode.
